@@ -1,0 +1,26 @@
+.login{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .input{
+        width: 240px;
+        padding: 6px 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        border: 2px solid black;
+    }
+
+    .button{
+        @extend .input;
+        // padding: 6px 10px;
+        // margin: 10px 0;
+        // border-radius: 4px;
+        // border: 2px solid black;
+        width: 75px;
+        cursor: pointer;
+    }
+}

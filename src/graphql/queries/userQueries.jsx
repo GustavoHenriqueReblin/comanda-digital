@@ -10,3 +10,14 @@ export const GetUsers = gql`
         }
     }
 `;
+
+export const GetUser = gql`
+  query GetUser($input: UserInput!) {
+    user(input: $input) {
+      id
+      username
+      password
+      token
+    }
+  }
+`;
