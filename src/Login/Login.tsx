@@ -36,7 +36,10 @@ function Login() {
     if (data && data.user != null) {
       const token = data.user.token;
       const dateExpires = new Date(new Date().getTime() + (24 * 60 * 60) * 1000); // 1 dia a partir de agora
-      Cookies.set(process.env.REACT_APP_COOKIE_NAME_USER_TOKEN, token, { secure: true, sameSite: 'strict', expires: dateExpires });
+      const cookieName = process.env.REACT_APP_COOKIE_NAME_USER_TOKEN;
+      if (cookieName) {
+        Cookies.set(cookieName, token, { secure: true, sameSite: 'strict', expires: dateExpires });
+      }
       navigate('/admin');
     }
 
@@ -45,7 +48,8 @@ function Login() {
 
   // Se já tiver token vai para o admin
   useEffect(() => {
-    if (!loading && !!(Cookies.get(process.env.REACT_APP_COOKIE_NAME_USER_TOKEN))) {
+    const cookieName = process.env.REACT_APP_COOKIE_NAME_USER_TOKEN;
+    if (!loading && !!(Cookies.get(cookieName ? cookieName : ''))) {
       navigate('/admin');
     }
   }, [loading, navigate]);

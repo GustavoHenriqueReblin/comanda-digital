@@ -1,3 +1,4 @@
+import React from "react";
 import ResponsiveProvider from '../components/ResponsiveProvider';
 
 function Home() {
