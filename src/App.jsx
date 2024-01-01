@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Cookies from 'js-cookie';
 import Login from './Login/Login';
 import Home from './Home/Home';
+import Admin from './Admin/Admin';
  
 function App() {
   const PrivateRoute = ({ children, redirectTo }) => {
@@ -13,13 +14,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route 
-          path='/home' element={
+          path='/admin' element={
             <PrivateRoute redirectTo="/login">
-              <Home />
+              <Admin />
             </PrivateRoute>
           } 
         />
         <Route path='/login' element={<Login />} />
+        <Route path='/home' element={<Home />} />
         <Route path="/" element={<Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>

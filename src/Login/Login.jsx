@@ -21,16 +21,16 @@ function Login() {
       const token = data.user.token; 
       const dateExpires = new Date(new Date().getTime() + (24 * 60 * 60) * 1000); // 1 dia a partir de agora
       Cookies.set(process.env.REACT_APP_COOKIE_NAME_USER_TOKEN, token, { secure: true, sameSite: 'strict', expires: dateExpires });
-      navigate('/home');
+      navigate('/admin');
     }
 
     setLoading(false);
   }, [data, navigate]);
 
-  // Se já tiver token vai para home
+  // Se já tiver token vai para o admin
   useEffect(() => {
     if (!loading && !!(Cookies.get(process.env.REACT_APP_COOKIE_NAME_USER_TOKEN))) {
-      navigate('/home'); 
+      navigate('/admin'); 
     }
   }, [loading, navigate]);
 
