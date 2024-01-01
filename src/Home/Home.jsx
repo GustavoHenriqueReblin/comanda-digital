@@ -1,10 +1,11 @@
-function Home() {
+import ResponsiveProvider from '../components/ResponsiveProvider';
 
+function Home() {
   return (
     <>
-      <h1>
-          Home
-        </h1>
+      <ResponsiveProvider>
+        
+      </ResponsiveProvider>
     </>
   );
 }
