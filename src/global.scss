@@ -1,8 +1,8 @@
-*, *:before, *:after{
+*, *:before, *:after {
     box-sizing: border-box;
 }
 
-html, body, div, span, object, iframe, figure, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, code, em, img, small, strike, strong, sub, sup, tt, b, u, i, ol, ul, li, fieldset, form, label, table, caption, tbody, tfoot, thead, tr, th, td, main, canvas, embed, footer, header, nav, section, video{
+html, body, div, span, object, iframe, figure, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, code, em, img, small, strike, strong, sub, sup, tt, b, u, i, ol, ul, li, fieldset, form, label, table, caption, tbody, tfoot, thead, tr, th, td, main, canvas, embed, footer, header, nav, section, video {
     margin: 0;
     padding: 0;
     border: 0;
@@ -12,36 +12,36 @@ html, body, div, span, object, iframe, figure, h1, h2, h3, h4, h5, h6, p, blockq
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     text-size-adjust: none;
-    font-family: 'Macondo Swash Caps', cursive;
+    font-family: 'Overlock', sans-serif;
 }
 
-footer, header, nav, section, main{
+footer, header, nav, section, main {
     display: block;
 }
 
-body{
+body {
     line-height: 1;
 }
 
-ol, ul{
+ol, ul {
     list-style: none;
 }
 
-blockquote, q{
+blockquote, q {
     quotes: none;
 }
 
-blockquote:before, blockquote:after, q:before, q:after{
+blockquote:before, blockquote:after, q:before, q:after {
     content: '';
     content: none;
 }
 
-table{
+table {
     border-collapse: collapse;
     border-spacing: 0;
 }
 
-input{
+input {
     -webkit-appearance: none;
     border-radius: 0;
 }
@@ -79,7 +79,7 @@ input{
     }
   } 
 
-.page{
+.page {
     height: 100vh;
     width: 100vw;
     display: flex;
@@ -87,11 +87,24 @@ input{
     justify-content: flex-start;
     align-items: center;
     overflow-y: auto;
+
+    @media screen and (min-width: 1px) {
+        padding: 0 10px 0 10px;
+    }
+
+    @media screen and (min-width: 548px) {
+        padding: 0 20px 0 20px;
+    }
+
+    @media screen and (min-width: 1024px) {
+        padding: 0 80px 0 80px;
+    }
 }
 
-.container{
+.container {
     height: 100%;
-    width: 80%;
+    width: 100%;
+    max-width: 1534px;
     display: flex;
     flex-direction: column;
     justify-content: start;

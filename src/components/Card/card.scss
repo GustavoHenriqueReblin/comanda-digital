@@ -1,12 +1,14 @@
+@import '../../variables.scss';
+
 .card {
-    width: 650px;
+    width: 100%;
     height: fit-content;
     display: flex;
     flex-direction: column;
     border-radius: 5px;
-    margin: 10px;
-    color: #fff;
-    background-color: rgb(44, 22, 14);
+    margin: 10px 0 10px 0;
+    color: $text-color;
+    background-color: $bg-color;
     overflow: hidden;
 
     .card-header {
@@ -14,9 +16,9 @@
         align-items: center;
         padding: 18px;
         cursor: pointer;
-        font-weight: 300;
-        font-size: larger;
-        box-shadow: rgba(0, 0, 0, 0.33) 0px 2px 14px 1px;
+        font-weight: 900;
+        font-size: large;
+        box-shadow: darken($color: $bg-color, $amount: 5) 0px 2px 14px 1px;
         z-index: 1;
 
         .card-title {
@@ -29,9 +31,9 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        padding: 18px;
-        color: #fff;
-        background-color: rgb(44, 22, 14);
+        padding: 18px 40px;
+        color: $text-color;
+        background-color: $bg-color;
         z-index: 0;
         transition: height 0.6s ease-in-out;
 
