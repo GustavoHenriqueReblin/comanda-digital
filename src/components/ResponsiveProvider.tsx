@@ -1,6 +1,7 @@
+import React from "react";
 import '../global.scss';
 
-function ResponsiveProvider({ children }) {
+function ResponsiveProvider({ children }: any) {
     return (
       <>
         <div className="page">
