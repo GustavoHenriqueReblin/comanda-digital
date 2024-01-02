@@ -86,7 +86,7 @@ input {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    overflow-y: auto;
+    overflow-y: scroll;
 
     @media screen and (min-width: 1px) {
         padding: 0 10px 0 10px;
