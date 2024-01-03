@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Cookies from 'js-cookie';
-import Login from './Login/Login';
-import Home from './Home/Home';
-import Admin from './Admin/Admin';
+import Login from './pages/Login/Login';
+import Home from './pages/Home/Home';
+import Admin from './pages/Admin/Admin';
 
 interface PrivateRouteProps {
   children: React.ReactNode;

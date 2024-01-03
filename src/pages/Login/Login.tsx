@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useLazyQuery } from '@apollo/client';
-import { GetUser } from '../graphql/queries/userQueries';
+import { GetUser } from '../../graphql/queries/userQueries';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import '../global.scss';
-import '../Login/login.scss';
+import '../../global.scss';
+import './login.scss';
 import Cookies from 'js-cookie';
-import Loading from '../components/Loading';
-import ResponsiveProvider from '../components/ResponsiveProvider';
+import Loading from '../../components/Loading';
+import ResponsiveProvider from '../../components/ResponsiveProvider';
 
 const loginUserFormSchema = z.object({
   user: z.string().nonempty('O e-mail é obrigatório').email('E-mail inválido!'),
