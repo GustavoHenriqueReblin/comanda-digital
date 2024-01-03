@@ -3,7 +3,6 @@ import React, { createContext, useContext } from "react";
 interface RememberContextProps {
     setProductSelectedIds: React.Dispatch<React.SetStateAction<[number] | null>>;
     setCategoryExpandedIds: React.Dispatch<React.SetStateAction<[number] | null>>;
-    setIsVisibleTotalizer: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const RememberContext = createContext<RememberContextProps | null>(

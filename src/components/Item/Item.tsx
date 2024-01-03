@@ -13,7 +13,7 @@ interface ItemProps {
 
 function Item({ id, title, price, description, isSelectedByUser }: ItemProps) {
     const [isSelected, setIsSelected] = useState(isSelectedByUser !== null ? isSelectedByUser : false);
-    const { setProductSelectedIds, setIsVisibleTotalizer } = useRememberContext();
+    const { setProductSelectedIds } = useRememberContext();
     const formattedPrice = Number(price).toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
@@ -26,7 +26,6 @@ function Item({ id, title, price, description, isSelectedByUser }: ItemProps) {
             setProductSelectedIds((prevIds) => {
                 const actualIds = prevIds ?? [];
     
-                setIsVisibleTotalizer(!!(actualIds.length > 0));
                 const updatedIds = updatedIsSelected
                     ? [...actualIds, id] // Insere o id do produto que foi selecionado
                     : actualIds.filter((existingId: number) => existingId !== id); // Remove o id do produto que foi selecionado

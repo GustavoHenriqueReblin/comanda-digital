@@ -14,12 +14,13 @@ function Menu() {
     const [getCategories, { data: categoryData }] = useLazyQuery(GetCategories);
     const [getProducts, { data: productData }] = useLazyQuery(GetProducts);
     const [loading, setLoading] = useState(true);
+
+    // Usado como filtro para buscar apenas produtos com categorias vinculadas.
     const [categoryIds, setCategoryIds] = useState<[number] | null>(null);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | null>(null);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_productSelectedIds, setProductSelectedIds] = useState<[number] | null>(null);
-    const [isVisibleTotalizer, setIsVisibleTotalizer] = useState(false);
 
     useEffect(() => {
       const fetchCategories = async () => {
@@ -63,7 +64,7 @@ function Menu() {
             ? ( <Loading title="Aguarde, carregando cardápio..." /> ) 
             : (
                 <RememberContext.Provider value={
-                  { setCategoryExpandedIds, setProductSelectedIds, setIsVisibleTotalizer }
+                  { setCategoryExpandedIds, setProductSelectedIds }
                 }>
                   <div className="cards-container">
                       { !categoryData
@@ -109,9 +110,7 @@ function Menu() {
                     isVisible={() => {
                       const sessionIds = sessionStorage.getItem('productSelectedIds');
                       const ids = sessionIds ? JSON.parse(sessionIds) : [];
-                      return ids
-                            ? !!(ids.length > 0)
-                            : isVisibleTotalizer
+                      return ids && !!(ids.length > 0);
                     }} 
                     total="1" 
                   />
