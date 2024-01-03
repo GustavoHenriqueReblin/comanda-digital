@@ -74,7 +74,8 @@ function Menu() {
                             isExpandedByUser={() => {
                               const sessionIds = sessionStorage.getItem('categoryExpandedIds');
                               const ids = sessionIds ? JSON.parse(sessionIds) : [];
-                              return !!(ids.length > 1) && ids.includes(category.id); 
+                              setCategoryExpandedIds(ids);
+                              return !!(ids.length > 0) && ids.includes(category.id); 
                             }}
                           >
                               <div className="item-container">
@@ -89,6 +90,12 @@ function Menu() {
                                           title={filteredProduct.name}
                                           price={filteredProduct.price}
                                           description={filteredProduct.description}
+                                          isSelectedByUser={() => {
+                                            const sessionIds = sessionStorage.getItem('productSelectedIds');
+                                            const ids = sessionIds ? JSON.parse(sessionIds) : [];
+                                            setProductSelectedIds(ids);
+                                            return !!(ids.length > 0) && ids.includes(filteredProduct.id); 
+                                          }}
                                       />
                                   )
                               )}
