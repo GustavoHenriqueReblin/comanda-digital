@@ -57,14 +57,20 @@ function Login() {
   // Ao clicar em entrar
   const validateLogin = (data: LoginFormData) => {
     const { user, password } = data;
-    getUser({
-      variables: { input: { username: user, password: password } },
-    });
+    try {
+      getUser({
+        variables: { input: { username: user, password: password } },
+      });
+    } catch (error) {
+      console.error("Erro ao buscar o usuário:", error);
+    }
   };
 
   return (
     <>
-      {loading ? <Loading /> :
+      { loading 
+      ? ( <Loading /> ) 
+      : (
         <ResponsiveProvider>
           <form className='login' onSubmit={handleSubmit(validateLogin)}>
             <label className='label-input'>E-mail:</label>
@@ -88,7 +94,7 @@ function Login() {
             <button className='button' type="submit">Entrar</button>
           </form>
         </ResponsiveProvider>
-      }
+      )}
     </>
   );
 }

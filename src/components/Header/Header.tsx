@@ -6,9 +6,9 @@ function Header() {
         <>
             <div className="header">
                 <div className="logo">
-                    <p>Carlota’s Kuchen Haus
+                    <span>Carlota’s Kuchen Haus
                         <div className="line"></div>
-                    </p>
+                    </span>
                 </div>
                 <div className="menu">
                     <div className="menu-box">

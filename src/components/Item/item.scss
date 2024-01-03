@@ -7,6 +7,7 @@
     color: $bg-color;
     cursor: pointer;
     position: relative;
+    background-color: $text-color;
 
     @media screen and (min-width: 1px) {
         height: 200px;
