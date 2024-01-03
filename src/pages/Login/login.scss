@@ -1,3 +1,5 @@
+@import '../../variables.scss';
+
 .login{
     height: 100%;
     width: 100%;
@@ -23,7 +25,7 @@
         @extend .label-input;
         margin: -5px 0 20px 0;
         font-size: small;
-        color: rgb(214, 27, 27);
+        color: $text-error;
     }
 
     .button{

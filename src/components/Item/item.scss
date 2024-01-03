@@ -49,7 +49,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgb(31, 255, 42);
+        background-color: $main-green;
+        color: $text-color;
         border-radius: 4px;
         right: 20px;
         bottom: 20px;

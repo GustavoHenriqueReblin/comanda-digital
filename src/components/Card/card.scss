@@ -37,11 +37,12 @@
         background-color: $text-color;
         border: 2px solid $bg-color;
         z-index: 0;
-        transition: height 0.6s ease-in-out;
+        transition: height 0.3s ease-in-out;
         background-color: $bg-color;
 
         &.expanded {
             height: fit-content;
+            transition: height 0.3s ease-in-out;
         }
     }
 }

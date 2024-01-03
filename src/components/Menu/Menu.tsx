@@ -3,8 +3,9 @@ import './menu.scss';
 import Card from "../Card/Card";
 import Item from "../Item/Item";
 import Loading from "../Loading";
-import { RememberContext } from "../../contexts/remember";
+import Totalizer from "../Totalizer/Totalizer";
 
+import { RememberContext } from "../../contexts/remember";
 import { useLazyQuery } from '@apollo/client';
 import { GetCategories } from '../../graphql/queries/categoryQueries';
 import { GetProducts } from '../../graphql/queries/productQueries';
@@ -18,6 +19,7 @@ function Menu() {
     const [_categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | null>(null);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_productSelectedIds, setProductSelectedIds] = useState<[number] | null>(null);
+    const [isVisibleTotalizer, setIsVisibleTotalizer] = useState(false);
 
     useEffect(() => {
       const fetchCategories = async () => {
@@ -61,7 +63,7 @@ function Menu() {
             ? ( <Loading title="Aguarde, carregando cardápio..." /> ) 
             : (
                 <RememberContext.Provider value={
-                  { setCategoryExpandedIds, setProductSelectedIds }
+                  { setCategoryExpandedIds, setProductSelectedIds, setIsVisibleTotalizer }
                 }>
                   <div className="cards-container">
                       { !categoryData
@@ -103,6 +105,16 @@ function Menu() {
                           </Card>
                       ))}
                   </div>
+                  <Totalizer 
+                    isVisible={() => {
+                      const sessionIds = sessionStorage.getItem('productSelectedIds');
+                      const ids = sessionIds ? JSON.parse(sessionIds) : [];
+                      return ids
+                            ? !!(ids.length > 0)
+                            : isVisibleTotalizer
+                    }} 
+                    total="1" 
+                  />
                 </RememberContext.Provider>
             )}
         </>
