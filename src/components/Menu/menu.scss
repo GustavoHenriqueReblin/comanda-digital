@@ -1,16 +1,25 @@
+@import '../../variables.scss';
+
 .cards-container {
     height: fit-content;
     width: 100%;
     display: flex;
     flex-direction: column;
     margin: 0;
-    padding: 0;
+    padding-bottom: 25px;
 
     .item-container {
         height: fit-content;
         width: 100%;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
+        display: grid;
+        gap: 6px;
+
+        @media screen and (min-width: 1px) {
+            grid-template-columns: 100%;
+        }
+    
+        @media screen and (min-width: 1024px) {
+            grid-template-columns: 49.75% 49.75%;
+        }
     }
 }

@@ -69,7 +69,7 @@ function Login() {
   return (
     <>
       { loading 
-      ? ( <Loading /> ) 
+      ? ( <Loading title="Aguarde, carregando..." /> ) 
       : (
         <ResponsiveProvider>
           <form className='login' onSubmit={handleSubmit(validateLogin)}>

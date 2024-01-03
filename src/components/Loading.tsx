@@ -1,12 +1,15 @@
 import React from "react";
 import '../global.scss';
 
-function Loading() {
+interface LoadingProps {
+    title: string;
+};
+
+function Loading({ title }: LoadingProps) {
     return (
-        <div className="page">
-            <div className="container">
-                <span className="loader"></span>
-            </div>
+        <div className="loader-container">
+            <span className="loader"></span>
+            <span>{ title }</span>
         </div>
     )
 }

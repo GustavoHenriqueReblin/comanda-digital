@@ -1,25 +1,48 @@
 import React, { useState } from "react";
 import './card.scss';
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { useRememberContext } from "../../contexts/remember";
 
 interface CardProps {
+    id: number;
     title: string;
     children: any;
+    isExpandedByUser?: () => boolean | null;
 };
 
-function Card({ title, children }: CardProps) {
-    const [isExpanded, setIsExpanded] = useState(false);
+function Card({ id, title, children, isExpandedByUser }: CardProps) {
+    const [isExpanded, setIsExpanded] = useState(isExpandedByUser !== null ? isExpandedByUser : false);
+    const { setCategoryExpandedIds } = useRememberContext();
 
+    const saveCategoryState = () => {
+        setIsExpanded((prevIsExpanded) => {
+            const updatedIsExpanded = !prevIsExpanded;
+    
+            setCategoryExpandedIds((prevIds) => {
+                const actualIds = prevIds ?? [];
+    
+                const updatedIds = updatedIsExpanded
+                    ? [...actualIds, id] // Insere o id da categoria que foi expandida
+                    : actualIds.filter((existingId: number) => existingId !== id); // Remove o id da categoria que foi expandida
+    
+                sessionStorage.setItem('categoryExpandedIds', JSON.stringify(updatedIds));
+                return updatedIds as [number];
+            });
+    
+            return updatedIsExpanded;
+        });
+    };
+    
     return (
         <>
             <div className="card">
-                <div onClick={() => setIsExpanded(!isExpanded)} className="card-header">
+                <div onClick={() => saveCategoryState()} className="card-header">
                     <h2 className="card-title">{ title }</h2>
                     { isExpanded ? <IoIosArrowUp /> : <IoIosArrowDown /> } 
                 </div>
                 {
                     isExpanded && (
-                        <div className={`card-content ${isExpanded ? ' expanded' : ''}`}>
+                        <div className={`card-content ${isExpanded ? 'expanded' : ''}`}>
                             { children }
                         </div>
                     )
