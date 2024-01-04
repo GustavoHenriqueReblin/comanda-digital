@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { useRememberContext } from "../../contexts/remember";
+import { Product } from "../../types/types";
 import './item.scss';
 
 interface ItemProps {
-    id: Number;
+    id: number;
     title: string;
     price: string;
     description: string;
@@ -13,35 +14,40 @@ interface ItemProps {
 
 function Item({ id, title, price, description, isSelectedByUser }: ItemProps) {
     const [isSelected, setIsSelected] = useState(isSelectedByUser !== null ? isSelectedByUser : false);
-    const { setProductSelectedIds } = useRememberContext();
+    const { setProductsSelected, setResetProducts, resetProducts } = useRememberContext();
     const formattedPrice = Number(price).toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
     });
 
     useEffect(() => {
-        if (isSelected && isSelectedByUser && isSelectedByUser() !== null && !isSelectedByUser()) {
-            // Caso o item não esteja selecionado pelo usuário, 
-            // necessário atualizar o state (pois rerender não inicializa o state)
-            setIsSelected(isSelectedByUser !== null ? isSelectedByUser : false);
+        if (resetProducts) {
+            setResetProducts(false);
+            setIsSelected(false);
         }
-    }, [isSelected, isSelectedByUser]);
+    }, [resetProducts, setResetProducts]);
 
     const saveProductState = () => {
         setIsSelected((prevIsSelected) => {
             const updatedIsSelected = !prevIsSelected;
     
-            setProductSelectedIds((prevIds) => {
-                const actualIds = prevIds ?? [];
-    
-                const updatedIds = updatedIsSelected
-                    ? [...actualIds, id] // Insere o id do produto que foi selecionado
-                    : actualIds.filter((existingId: number) => existingId !== id); // Remove o id do produto que foi selecionado
-    
-                sessionStorage.setItem('productSelectedIds', JSON.stringify(updatedIds));
-                return updatedIds as [number];
+            setProductsSelected((prevProducts): Product[] | [] => {
+                const actualProducts = prevProducts ?? [];
+                const newProduct: Product = {
+                    id: Number(id),
+                    name: title,
+                    price: Number(price),
+                    description: description
+                };
+                
+                const updatedProducts: Product[] | [] = updatedIsSelected
+                    ? [...actualProducts, newProduct]
+                    : actualProducts.filter(product => Number(product.id) !== Number(id));
+
+                sessionStorage.setItem('productsSelected', JSON.stringify(updatedProducts));
+                return updatedProducts;
             });
-    
+
             return updatedIsSelected;
         });
     };

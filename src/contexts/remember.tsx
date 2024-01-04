@@ -1,13 +1,18 @@
 import React, { createContext, useContext } from "react";
+import { Product } from "../types/types";
 
 interface RememberContextProps {
-    setProductSelectedIds: React.Dispatch<React.SetStateAction<[number] | []>>;
+    setProductsSelected: React.Dispatch<React.SetStateAction<Product[] | []>>;
     setCategoryExpandedIds: React.Dispatch<React.SetStateAction<[number] | []>>;
+    resetProducts: boolean,
+    setResetProducts: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const RememberContext = createContext<RememberContextProps>({
-    setProductSelectedIds: () => {},
+    setProductsSelected: () => {},
     setCategoryExpandedIds: () => {},
+    resetProducts: false,
+    setResetProducts: () => {},
 });
   
 export const useRememberContext = () => {

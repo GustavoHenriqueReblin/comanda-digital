@@ -5,6 +5,7 @@ import Item from "../Item/Item";
 import Loading from "../Loading";
 import Totalizer from "../Totalizer/Totalizer";
 
+import { Product } from "../../types/types";
 import { RememberContext } from "../../contexts/remember";
 import { useLazyQuery } from '@apollo/client';
 import { GetCategories } from '../../graphql/queries/categoryQueries';
@@ -20,7 +21,9 @@ function Menu() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | []>([]);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_productSelectedIds, setProductSelectedIds] = useState<[number] | []>([]);
+    const [_productsSelected, setProductsSelected] = useState<Product[] | []>([]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [resetProducts, setResetProducts] = useState<boolean>(false);
 
     useEffect(() => {
       const fetchCategories = async () => {
@@ -64,7 +67,7 @@ function Menu() {
             ? ( <Loading title="Aguarde, carregando cardápio..." /> ) 
             : (
                 <RememberContext.Provider value={
-                  { setCategoryExpandedIds, setProductSelectedIds }
+                  { setCategoryExpandedIds, setProductsSelected, resetProducts, setResetProducts }
                 }>
                   <div className="cards-container">
                       { !categoryData
@@ -88,17 +91,18 @@ function Menu() {
                                   .filter((product: any) => product.idCategory === category.id)
                                   .map((filteredProduct: any) => (
                                       <Item
-                                          key={filteredProduct.id}
-                                          id={filteredProduct.id}
-                                          title={filteredProduct.name}
-                                          price={filteredProduct.price}
-                                          description={filteredProduct.description}
-                                          isSelectedByUser={() => {
-                                            const sessionIds = sessionStorage.getItem('productSelectedIds');
-                                            const ids = sessionIds ? JSON.parse(sessionIds) : [];
-                                            setProductSelectedIds(ids);
-                                            return !!(ids.length > 0) && ids.includes(filteredProduct.id); 
-                                          }}
+                                        key={filteredProduct.id}
+                                        id={filteredProduct.id}
+                                        title={filteredProduct.name}
+                                        price={filteredProduct.price}
+                                        description={filteredProduct.description}
+                                        isSelectedByUser={() => {
+                                          const sessionProducts = sessionStorage.getItem('productsSelected');
+                                          const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
+                                          const foundProduct = selectedProducts.find((product: Product) => product.id === filteredProduct.id);
+                                          setProductsSelected(selectedProducts);
+                                          return (!!foundProduct);
+                                        }}                                        
                                       />
                                   )
                               )}
@@ -108,7 +112,7 @@ function Menu() {
                   </div>
                   <Totalizer 
                     isVisible={() => {
-                      const sessionIds = sessionStorage.getItem('productSelectedIds');
+                      const sessionIds = sessionStorage.getItem('productsSelected');
                       const ids = sessionIds ? JSON.parse(sessionIds) : [];
                       return ids && !!(ids.length > 0);
                     }} 
