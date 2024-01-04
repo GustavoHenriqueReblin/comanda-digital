@@ -7,13 +7,13 @@ import { Product } from "../../types/types";
 
 interface TotalizerProps {
     isVisible: () => boolean | null;
-    total: string;
+    total: () => string;
 };
 
 function Totalizer({ isVisible, total }: TotalizerProps) {
     const [isModalClearOpen, setIsModalClearOpen] = useState(false);
     const { setProductsSelected, setResetProducts } = useRememberContext();
-    const formattedTotal = Number(total).toLocaleString('pt-BR', {
+    const formattedTotal = Number(total()).toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
     });

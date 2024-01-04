@@ -116,7 +116,12 @@ function Menu() {
                       const ids = sessionIds ? JSON.parse(sessionIds) : [];
                       return ids && !!(ids.length > 0);
                     }} 
-                    total="1" 
+                    total={() => {
+                      const sessionProducts = sessionStorage.getItem('productsSelected');
+                      const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
+                      const totalPrice = selectedProducts.reduce((sumAux: number, product: Product) => sumAux + product.price, 0);
+                      return `${totalPrice.toFixed(2)}`;
+                    }} 
                   />
                 </RememberContext.Provider>
             )}

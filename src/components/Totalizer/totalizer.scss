@@ -1,6 +1,8 @@
 @import '../../variables.scss';
 
 .totalizer-container {
+    height: 65px;
+    width: 250px;
     background-color: $text-color;
     padding: 16px;
     display: grid;
@@ -17,8 +19,6 @@
     -moz-box-shadow: 8px 1px 9px -5px rgba(0,0,0,0.57);
 
     @media screen and (min-width: 1px) {
-        height: 65px;
-        width: 220px;
         bottom: 10px;
         right: 26px;
         &:hover{
@@ -30,8 +30,6 @@
     }
 
     @media screen and (min-width: 1024px) {
-        height: 65px;
-        width: 220px;
         bottom: 24px;
         right: 124px;
         &:hover {
