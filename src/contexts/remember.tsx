@@ -1,13 +1,14 @@
 import React, { createContext, useContext } from "react";
 
 interface RememberContextProps {
-    setProductSelectedIds: React.Dispatch<React.SetStateAction<[number] | null>>;
-    setCategoryExpandedIds: React.Dispatch<React.SetStateAction<[number] | null>>;
+    setProductSelectedIds: React.Dispatch<React.SetStateAction<[number] | []>>;
+    setCategoryExpandedIds: React.Dispatch<React.SetStateAction<[number] | []>>;
 };
 
-export const RememberContext = createContext<RememberContextProps | null>(
-    null
-);
+export const RememberContext = createContext<RememberContextProps>({
+    setProductSelectedIds: () => {},
+    setCategoryExpandedIds: () => {},
+});
   
 export const useRememberContext = () => {
     const context = useContext(RememberContext);

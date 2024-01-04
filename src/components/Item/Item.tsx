@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { useRememberContext } from "../../contexts/remember";
 import './item.scss';
@@ -18,6 +18,14 @@ function Item({ id, title, price, description, isSelectedByUser }: ItemProps) {
         style: 'currency',
         currency: 'BRL',
     });
+
+    useEffect(() => {
+        if (isSelected && isSelectedByUser && isSelectedByUser() !== null && !isSelectedByUser()) {
+            // Caso o item não esteja selecionado pelo usuário, 
+            // necessário atualizar o state (pois rerender não inicializa o state)
+            setIsSelected(isSelectedByUser !== null ? isSelectedByUser : false);
+        }
+    }, [isSelected, isSelectedByUser]);
 
     const saveProductState = () => {
         setIsSelected((prevIsSelected) => {
@@ -39,7 +47,7 @@ function Item({ id, title, price, description, isSelectedByUser }: ItemProps) {
     };
 
     return (
-        <div onClick={() => saveProductState()} className={`item ${isSelected ? 'selected' : ''}`}>
+        <div onClick={() => saveProductState()} className='item'>
             <div className="item-title-container">
                 <h2 className="item-title">{ title }</h2>
             </div>

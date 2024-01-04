@@ -6,9 +6,10 @@ interface ModalProps {
     title: string;
     isOpen: boolean;
     onClose: () => void;
+    onConfirm: () => void;
 };
 
-function Modal({ isOpen, onClose, title }: ModalProps) {
+function Modal({ title, isOpen, onClose, onConfirm }: ModalProps) {
     useEffect(() => {
         const handleEsc = (event: KeyboardEvent) => {
             const keyCode = event.keyCode || event.which;
@@ -22,10 +23,6 @@ function Modal({ isOpen, onClose, title }: ModalProps) {
             window.removeEventListener("keydown", handleEsc);
         };
     }, [onClose]);
-
-    const clearItems = () => {
-
-    }
 
     return (
         <>  
@@ -41,7 +38,7 @@ function Modal({ isOpen, onClose, title }: ModalProps) {
                             <h2 className="title"> { title } </h2>
                         </div>
                         <div className="choices">
-                            <button onClick={() => clearItems()} className="button yes">Sim</button>
+                            <button onClick={() => onConfirm()} className="button yes">Sim</button>
                             <button onClick={() => onClose()} className="button no">Não</button>
                         </div>
                     </div>

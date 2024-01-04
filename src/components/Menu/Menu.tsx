@@ -18,9 +18,9 @@ function Menu() {
     // Usado como filtro para buscar apenas produtos com categorias vinculadas.
     const [categoryIds, setCategoryIds] = useState<[number] | null>(null);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | null>(null);
+    const [_categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | []>([]);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_productSelectedIds, setProductSelectedIds] = useState<[number] | null>(null);
+    const [_productSelectedIds, setProductSelectedIds] = useState<[number] | []>([]);
 
     useEffect(() => {
       const fetchCategories = async () => {
