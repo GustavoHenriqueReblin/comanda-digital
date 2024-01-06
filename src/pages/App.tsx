@@ -2,11 +2,11 @@ import React from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 // import Cookies from 'js-cookie';
 // import Login from './pages/Login/Login';
-import Home from './pages/Home/Home';
+import Home from './Home/Home';
 // import Admin from './pages/Admin/Admin';
-import Header from "./components/Header/Header";
-import ResponsiveProvider from "./components/ResponsiveProvider";
-import Menu from "./components/Menu/Menu";
+import Header from "../components/Header/Header";
+import ResponsiveProvider from "../components/ResponsiveProvider";
+import Menu from "../components/Menu/Menu";
 
 // interface PrivateRouteProps {
 //   children: React.ReactNode;
