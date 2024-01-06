@@ -10,7 +10,6 @@ import '../../global.scss';
 import './login.scss';
 import Cookies from 'js-cookie';
 import Loading from '../../components/Loading';
-import ResponsiveProvider from '../../components/ResponsiveProvider';
 
 const loginUserFormSchema = z.object({
   user: z.string().nonempty('O e-mail é obrigatório').email('E-mail inválido!'),
@@ -71,29 +70,27 @@ function Login() {
       { loading 
       ? ( <Loading title="Aguarde, carregando..." /> ) 
       : (
-        <ResponsiveProvider>
-          <form className='login' onSubmit={handleSubmit(validateLogin)}>
-            <label className='label-input'>E-mail:</label>
-            <input
-              className='input'
-              type="text"
-              aria-label="user input"
-              placeholder="seu-email@valido.com.br"
-              {...register('user')}
-            />
-            {errors.user && <span className='error-input'>{errors.user.message}</span>}
-            <label className='label-input'>Senha:</label>
-            <input
-              className='input'
-              type="password"
-              aria-label="password input"
-              placeholder="sua senha"
-              {...register('password')}
-            />
-            {errors.password && <span className='error-input'>{errors.password.message}</span>}
-            <button className='button' type="submit">Entrar</button>
-          </form>
-        </ResponsiveProvider>
+        <form className='login' onSubmit={handleSubmit(validateLogin)}>
+          <label className='label-input'>E-mail:</label>
+          <input
+            className='input'
+            type="text"
+            aria-label="user input"
+            placeholder="seu-email@valido.com.br"
+            {...register('user')}
+          />
+          {errors.user && <span className='error-input'>{errors.user.message}</span>}
+          <label className='label-input'>Senha:</label>
+          <input
+            className='input'
+            type="password"
+            aria-label="password input"
+            placeholder="sua senha"
+            {...register('password')}
+          />
+          {errors.password && <span className='error-input'>{errors.password.message}</span>}
+          <button className='button' type="submit">Entrar</button>
+        </form>
       )}
     </>
   );

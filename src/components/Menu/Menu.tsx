@@ -22,7 +22,6 @@ function Menu() {
     const [_categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | []>([]);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_productsSelected, setProductsSelected] = useState<Product[] | []>([]);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [resetProducts, setResetProducts] = useState<boolean>(false);
 
     useEffect(() => {

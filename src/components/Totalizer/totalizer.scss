@@ -20,24 +20,12 @@
 
     @media screen and (min-width: 1px) {
         bottom: 10px;
-        right: 26px;
-        &:hover{
-            height: 65px;
-            width: 220px;
-            bottom: 10px;
-            right: 26px;
-        }
+        right: 24px;
     }
 
     @media screen and (min-width: 1024px) {
         bottom: 24px;
-        right: 124px;
-        &:hover {
-            bottom: 24px;
-            right: 124px;
-            transform: scale(1.06);
-            transition: transform 0.2s ease-in-out;
-        }
+        right: 112px;
     }
 
     .value-container {

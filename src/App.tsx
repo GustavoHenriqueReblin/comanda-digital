@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 import Login from './pages/Login/Login';
 import Home from './pages/Home/Home';
 import Admin from './pages/Admin/Admin';
+import Header from "./components/Header/Header";
+import ResponsiveProvider from "./components/ResponsiveProvider";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -19,18 +21,21 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, redirectTo }) => 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route 
-          path='/admin' element={
-            <PrivateRoute redirectTo="/login">
-              <Admin />
-            </PrivateRoute>
-          } 
-        />
-        <Route path='/login' element={<Login />} />
-        <Route path="/" element={<Home />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+      <ResponsiveProvider>
+        <Header />
+        <Routes>
+          {/* <Route 
+            path='/admin' element={
+              <PrivateRoute redirectTo="/login">
+                <Admin />
+              </PrivateRoute>
+            } 
+          />
+          <Route path='/login' element={<Login />} /> */}
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </ResponsiveProvider>
     </BrowserRouter>
   );
 }
