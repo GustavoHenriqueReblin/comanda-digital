@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import './menu.scss';
-import CategoryCard from "../CategoryCard/CategoryCard";
-import Item from "../Item/Item";
-import Loading from "../Loading";
-import Totalizer from "../Totalizer/Totalizer";
+import CategoryCard from "../../components/CategoryCard/CategoryCard";
+import Item from "../../components/Item/Item";
+import Loading from "../../components/Loading";
+import Totalizer from "../../components/Totalizer/Totalizer";
 
 import { Product } from "../../types/types";
 import { RememberContext } from "../../contexts/remember";
