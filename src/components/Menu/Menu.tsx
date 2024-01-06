@@ -25,6 +25,7 @@ function Menu() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_productsSelected, setProductsSelected] = useState<Product[] | []>([]);
     const [resetProducts, setResetProducts] = useState<boolean>(false);
+    const [sessionTableSelected, setSessionTableSelected] = useState<string | null>(null);
 
     useEffect(() => {
       const fetchCategories = async () => {
@@ -41,11 +42,10 @@ function Menu() {
         }
       };
 
-      const sessionIdTableSelected = sessionStorage.getItem('idTableSelected');
-      if (!sessionIdTableSelected) { // Mostra o menu apenas com a mesa selecionada
-        navigate('/');
-      }
-  
+      // Mostra o menu apenas com a mesa selecionada
+      const verifyTable = sessionStorage.getItem('tableSelected');
+      verifyTable ? setSessionTableSelected(verifyTable) : navigate('/');
+      
       fetchCategories();
     }, [getCategories, categoryData, navigate]);
   
@@ -76,45 +76,49 @@ function Menu() {
                   { setCategoryExpandedIds, setProductsSelected, resetProducts, setResetProducts }
                 }>
                   <div className="cards-container">
-                      { !categoryData
-                      ? null
-                      : categoryData.categories.map((category: any) => (
-                          <CategoryCard 
-                            id={category.id}
-                            key={category.id} 
-                            title={category.name}
-                            isExpandedByUser={() => {
-                              const sessionIds = sessionStorage.getItem('categoryExpandedIds');
-                              const ids = sessionIds ? JSON.parse(sessionIds) : [];
-                              setCategoryExpandedIds(ids);
-                              return !!(ids.length > 0) && ids.includes(category.id); 
-                            }}
-                          >
-                              <div className="item-container">
-                              {   productData &&
-                                  productData.products &&
-                                  productData.products
-                                  .filter((product: any) => product.idCategory === category.id)
-                                  .map((filteredProduct: any) => (
-                                      <Item
-                                        key={filteredProduct.id}
-                                        id={filteredProduct.id}
-                                        title={filteredProduct.name}
-                                        price={filteredProduct.price}
-                                        description={filteredProduct.description}
-                                        isSelectedByUser={() => {
-                                          const sessionProducts = sessionStorage.getItem('productsSelected');
-                                          const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
-                                          const foundProduct = selectedProducts.find((product: Product) => product.id === filteredProduct.id);
-                                          setProductsSelected(selectedProducts);
-                                          return (!!foundProduct);
-                                        }}                                        
-                                      />
-                                  )
-                              )}
-                              </div>
-                          </CategoryCard>
-                      ))}
+                    <h2 className="table-title">
+                      Número da sua mesa:&nbsp;
+                      {sessionTableSelected ? JSON.parse(sessionTableSelected).code : ''}
+                    </h2>
+                    { !categoryData
+                    ? null
+                    : categoryData.categories.map((category: any) => (
+                        <CategoryCard 
+                          id={category.id}
+                          key={category.id} 
+                          title={category.name}
+                          isExpandedByUser={() => {
+                            const sessionIds = sessionStorage.getItem('categoryExpandedIds');
+                            const ids = sessionIds ? JSON.parse(sessionIds) : [];
+                            setCategoryExpandedIds(ids);
+                            return !!(ids.length > 0) && ids.includes(category.id); 
+                          }}
+                        >
+                            <div className="item-container">
+                            {   productData &&
+                                productData.products &&
+                                productData.products
+                                .filter((product: any) => product.idCategory === category.id)
+                                .map((filteredProduct: any) => (
+                                    <Item
+                                      key={filteredProduct.id}
+                                      id={filteredProduct.id}
+                                      title={filteredProduct.name}
+                                      price={filteredProduct.price}
+                                      description={filteredProduct.description}
+                                      isSelectedByUser={() => {
+                                        const sessionProducts = sessionStorage.getItem('productsSelected');
+                                        const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
+                                        const foundProduct = selectedProducts.find((product: Product) => product.id === filteredProduct.id);
+                                        setProductsSelected(selectedProducts);
+                                        return (!!foundProduct);
+                                      }}                                        
+                                    />
+                                )
+                            )}
+                            </div>
+                        </CategoryCard>
+                    ))}
                   </div>
                   <Totalizer 
                     isVisible={() => {

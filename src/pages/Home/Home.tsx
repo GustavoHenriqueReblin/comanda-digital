@@ -17,7 +17,7 @@ function Home() {
     };
   
     fetchTables();
-    sessionStorage.removeItem('idTableSelected');
+    sessionStorage.removeItem('tableSelected');
   }, [getTables, tableData]);  
 
   return (

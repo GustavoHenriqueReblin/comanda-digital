@@ -13,7 +13,8 @@ function TableCard({ id, code, state }: TableProps) {
 
     const saveTable = () => {
         if (state) {
-            sessionStorage.setItem('idTableSelected', JSON.stringify(id));
+            const tableObj = { id, code, state };
+            sessionStorage.setItem('tableSelected', JSON.stringify(tableObj));
             navigate('/menu');
         }
     };
