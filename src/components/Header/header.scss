@@ -58,6 +58,9 @@
             color: $text-color;
             user-select: none;
             border-radius: 5px;
+            box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.57);
+            -webkit-box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.57);
+            -moz-box-shadow: 2px 2px 5px 1px rgba(0,0,0,0.57);
 
             @media screen and (min-width: 1px) {
                 font-size: medium;

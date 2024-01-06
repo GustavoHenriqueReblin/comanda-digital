@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './menu.scss';
-import Card from "../Card/Card";
+import CategoryCard from "../CategoryCard/CategoryCard";
 import Item from "../Item/Item";
 import Loading from "../Loading";
 import Totalizer from "../Totalizer/Totalizer";
@@ -10,11 +10,13 @@ import { RememberContext } from "../../contexts/remember";
 import { useLazyQuery } from '@apollo/client';
 import { GetCategories } from '../../graphql/queries/categoryQueries';
 import { GetProducts } from '../../graphql/queries/productQueries';
+import { useNavigate } from 'react-router-dom';
 
 function Menu() {
     const [getCategories, { data: categoryData }] = useLazyQuery(GetCategories);
     const [getProducts, { data: productData }] = useLazyQuery(GetProducts);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     // Usado como filtro para buscar apenas produtos com categorias vinculadas.
     const [categoryIds, setCategoryIds] = useState<[number] | null>(null);
@@ -38,9 +40,14 @@ function Menu() {
           console.error("Erro ao buscar as categorias:", error);
         }
       };
+
+      const sessionIdTableSelected = sessionStorage.getItem('idTableSelected');
+      if (!sessionIdTableSelected) { // Mostra o menu apenas com a mesa selecionada
+        navigate('/');
+      }
   
       fetchCategories();
-    }, [getCategories, categoryData]);
+    }, [getCategories, categoryData, navigate]);
   
     useEffect(() => {
       const fetchProducts = async () => {
@@ -72,7 +79,7 @@ function Menu() {
                       { !categoryData
                       ? null
                       : categoryData.categories.map((category: any) => (
-                          <Card 
+                          <CategoryCard 
                             id={category.id}
                             key={category.id} 
                             title={category.name}
@@ -106,7 +113,7 @@ function Menu() {
                                   )
                               )}
                               </div>
-                          </Card>
+                          </CategoryCard>
                       ))}
                   </div>
                   <Totalizer 

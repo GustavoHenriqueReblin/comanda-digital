@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import './card.scss';
+import './categoryCard.scss';
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useRememberContext } from "../../contexts/remember";
 

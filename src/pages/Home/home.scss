@@ -1,0 +1,55 @@
+@import '../../variables.scss';
+
+.fix-widths {
+    @media screen and (min-width: 1px) {
+        width: 100%;
+    }
+
+    @media screen and (min-width: 1024px) {
+        width: 60%;
+    }
+}
+
+.title {
+    @extend .fix-widths;
+    font-weight: 900;
+    margin-top: 24px;
+
+    @media screen and (min-width: 1px) {
+        font-size: larger;
+    }
+
+    @media screen and (min-width: 1024px) {
+        font-size: x-large;
+    }
+}
+
+.info {
+    @extend .fix-widths;
+    margin: 12px 0;
+    padding-left: 25px;
+
+    @media screen and (min-width: 1px) {
+        font-size: smaller;
+    }
+
+    @media screen and (min-width: 1024px) {
+        font-size: medium;
+    }
+}
+
+.tables-container {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px 0 80px 0;
+
+    .table-box-container {
+        @extend .fix-widths;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 16px;
+    }
+}

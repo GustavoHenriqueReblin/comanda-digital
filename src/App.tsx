@@ -6,6 +6,7 @@ import Home from './pages/Home/Home';
 // import Admin from './pages/Admin/Admin';
 import Header from "./components/Header/Header";
 import ResponsiveProvider from "./components/ResponsiveProvider";
+import Menu from "./components/Menu/Menu";
 
 // interface PrivateRouteProps {
 //   children: React.ReactNode;
@@ -33,6 +34,7 @@ function App() {
           />
           <Route path='/login' element={<Login />} /> */}
           <Route path="/" element={<Home />} />
+          <Route path="/menu" element={<Menu />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </ResponsiveProvider>
