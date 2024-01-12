@@ -26,11 +26,15 @@
             font-size: xx-large;
         }
 
-        .line {
-            height: 5px;
-            width: 100%;
-            margin: 8px 0;
-            background-color: $bg-color;
+        .logo-title {
+            cursor: pointer;
+        
+            .line {
+                height: 5px;
+                width: 100%;
+                margin: 8px 0;
+                background-color: $bg-color;
+            }
         }
     }
 

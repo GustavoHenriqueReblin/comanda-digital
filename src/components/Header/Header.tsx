@@ -1,12 +1,21 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Redirect } from "../../types/types";
 import './header.scss';
 
 function Header() {
+    const navigate = useNavigate();
+
+    const redirectTo = (typeRedirect: Redirect) => {
+        if (typeRedirect === Redirect.ROOT) {
+            navigate('/')
+        }
+    };
     return (
         <>
             <div className="header">
                 <div className="logo">
-                    <span>Carlota’s Kuchen Haus
+                    <span onClick={() => redirectTo(Redirect.ROOT)} className="logo-title">Carlota’s Kuchen Haus
                         <div className="line"></div>
                     </span>
                 </div>

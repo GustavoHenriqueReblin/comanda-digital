@@ -5,12 +5,13 @@ import Item from "../../components/Item/Item";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
 
-import { Product } from "../../types/types";
+import { Product, Redirect } from "../../types/types";
 import { RememberContext } from "../../contexts/remember";
 import { useLazyQuery } from '@apollo/client';
 import { GetCategories } from '../../graphql/queries/categoryQueries';
 import { GetProducts } from '../../graphql/queries/productQueries';
 import { useNavigate } from 'react-router-dom';
+import { IoRefresh } from "react-icons/io5";
 
 function Menu() {
     const [getCategories, { data: categoryData }] = useLazyQuery(GetCategories);
@@ -26,6 +27,12 @@ function Menu() {
     const [_productsSelected, setProductsSelected] = useState<Product[] | []>([]);
     const [resetProducts, setResetProducts] = useState<boolean>(false);
     const [sessionTableSelected, setSessionTableSelected] = useState<string | null>(null);
+
+    const redirectTo = (typeRedirect: Redirect) => {
+      if (typeRedirect === Redirect.ROOT) {
+        navigate('/')
+      }
+    };
 
     useEffect(() => {
       const fetchCategories = async () => {
@@ -76,10 +83,15 @@ function Menu() {
                   { setCategoryExpandedIds, setProductsSelected, resetProducts, setResetProducts }
                 }>
                   <div className="cards-container">
-                    <h2 className="table-title">
-                      Número da sua mesa:&nbsp;
-                      {sessionTableSelected ? JSON.parse(sessionTableSelected).code : ''}
-                    </h2>
+                    <div className="table-info">
+                      <h2 className="table-title">
+                        Número da sua mesa:&nbsp;
+                        {sessionTableSelected ? JSON.parse(sessionTableSelected).code : ''}
+                      </h2>
+                      <span className="change-table" onClick={() => redirectTo(Redirect.ROOT)}>
+                        <IoRefresh /> &nbsp; Trocar de mesa
+                      </span>
+                    </div>
                     { !categoryData
                     ? null
                     : categoryData.categories.map((category: any) => (

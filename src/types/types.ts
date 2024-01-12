@@ -17,3 +17,7 @@ export type Product = {
     price: number,
     description: string
 };
+
+export enum Redirect {
+    ROOT
+}

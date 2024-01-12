@@ -8,16 +8,36 @@
     margin: 0;
     padding-bottom: 25px;
 
-    .table-title {
-        font-weight: 900;
-        margin: 12px 0px;
+    .table-info {
+        display: flex;
+        align-items: center;
 
-        @media screen and (min-width: 1px) {
-            font-size: larger;
+        .table-title {
+            font-weight: 900;
+            margin: 12px 0px;
+            flex-grow: 1;
+
+            @media screen and (min-width: 1px) {
+                font-size: larger;
+            }
+
+            @media screen and (min-width: 1024px) {
+                font-size: x-large;
+            }
         }
 
-        @media screen and (min-width: 1024px) {
-            font-size: x-large;
+        .change-table {
+            display: flex;
+            padding: 8px 6px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: transform 0.3s ease-in-out;
+            margin-left: 5px;
+
+            &:hover {
+                transform: scale(1.02);
+                transition: transform 0.1s ease-in-out;
+            }
         }
     }
 
