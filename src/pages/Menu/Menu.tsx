@@ -121,7 +121,7 @@ function Menu() {
                                       isSelectedByUser={() => {
                                         const sessionProducts = sessionStorage.getItem('productsSelected');
                                         const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
-                                        const foundProduct = selectedProducts.find((product: Product) => product.id === filteredProduct.id);
+                                        const foundProduct = selectedProducts.find((product: Product) => product.id === Number(filteredProduct.id));
                                         setProductsSelected(selectedProducts);
                                         return (!!foundProduct);
                                       }}                                        
