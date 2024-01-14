@@ -3,9 +3,15 @@ import './home.scss';
 import React, { useEffect } from "react";
 import TableCard from "../../components/TableCard/TableCard";
 import { GetTables } from "../../graphql/queries/tableQueries";
+import { useLocation } from "react-router-dom";
+import { routeTitles } from "../../types/types";
+import { Helmet } from "react-helmet";
 
 function Home() {
   const [getTables, { data: tableData }] = useLazyQuery(GetTables);
+  const location = useLocation();
+
+  const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
 
   useEffect(() => {
     const fetchTables = async () => {
@@ -22,6 +28,9 @@ function Home() {
 
   return (
     <>
+      <Helmet>
+        <title>{pageTitle}</title>
+      </Helmet>
       <h2 className="title">
         Por favor, selecione uma das mesas disponíveis:
       </h2>

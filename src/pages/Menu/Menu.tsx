@@ -5,19 +5,21 @@ import Item from "../../components/Item/Item";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
 
-import { Product, Redirect } from "../../types/types";
+import { Product, Redirect, routeTitles } from "../../types/types";
 import { RememberContext } from "../../contexts/remember";
 import { useLazyQuery } from '@apollo/client';
 import { GetCategories } from '../../graphql/queries/categoryQueries';
 import { GetProducts } from '../../graphql/queries/productQueries';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { IoRefresh } from "react-icons/io5";
+import { Helmet } from "react-helmet";
 
 function Menu() {
     const [getCategories, { data: categoryData }] = useLazyQuery(GetCategories);
     const [getProducts, { data: productData }] = useLazyQuery(GetProducts);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
 
     // Usado como filtro para buscar apenas produtos com categorias vinculadas.
     const [categoryIds, setCategoryIds] = useState<[number] | null>(null);
@@ -33,6 +35,8 @@ function Menu() {
         navigate('/')
       }
     };
+
+    const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
 
     useEffect(() => {
       const fetchCategories = async () => {
@@ -82,6 +86,9 @@ function Menu() {
                 <RememberContext.Provider value={
                   { setCategoryExpandedIds, setProductsSelected, resetProducts, setResetProducts }
                 }>
+                  <Helmet>
+                    <title>{pageTitle}</title>
+                  </Helmet>
                   <div className="cards-container">
                     <div className="table-info">
                       <h2 className="table-title">

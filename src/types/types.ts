@@ -20,4 +20,9 @@ export type Product = {
 
 export enum Redirect {
     ROOT
-}
+};
+
+export const routeTitles: Record<string, string> = {
+    '/': 'Comanda digital - Mesas disponíveis',
+    '/menu': 'Comanda digital - Menu',
+};
