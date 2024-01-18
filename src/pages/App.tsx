@@ -4,6 +4,7 @@ import Home from './Home/Home';
 import Header from "../components/Header/Header";
 import ResponsiveProvider from "../components/ResponsiveProvider";
 import Menu from "./Menu/Menu";
+import Queue from "./Queue/Queue";
  
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Menu />} />
+          <Route path="/queue" element={<Queue />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </ResponsiveProvider>

@@ -5,6 +5,10 @@ import { FaCheck } from "react-icons/fa";
 import Modal from "../Modal/Modal";
 import { useRememberContext } from "../../contexts/remember";
 import { Product } from "../../types/types";
+import { CREATE_ORDER } from "../../graphql/mutations/order";
+import { useMutation } from "@apollo/client";
+import { getDateTime } from "../../helper";
+import { useNavigate } from "react-router-dom";
 
 interface TotalizerProps {
     isVisible: () => boolean | null;
@@ -15,10 +19,12 @@ function Totalizer({ isVisible, total }: TotalizerProps) {
     const [isModalClearOpen, setIsModalClearOpen] = useState(false);
     const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
     const { setProductsSelected, setResetProducts } = useRememberContext();
+    const [createOrder] = useMutation(CREATE_ORDER);
     const formattedTotal = Number(total()).toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
     });
+    const navigate = useNavigate();
 
     const clearItems = () => {
         try {
@@ -33,11 +39,39 @@ function Totalizer({ isVisible, total }: TotalizerProps) {
         }
     };
 
-    const confirmOrder = () => {
+    const confirmOrder = async () => {
         try {
-            
-        } finally {
-            setIsModalConfirmOpen(false);
+            const selectedProducts = JSON.parse(sessionStorage.getItem('productsSelected') || '');
+            const selectedTable = JSON.parse(sessionStorage.getItem('tableSelected') || '');
+
+            try {
+                const res = await createOrder({
+                    variables: {
+                        input: {
+                            id: 0,
+                            bartenderId: -1,
+                            tableId: selectedTable.id,
+                            date: getDateTime(),
+                            value: Number(total()),
+                            status: 0,
+                            items: selectedProducts?.map((product: any) => ({
+                                    id: 0,
+                                    orderId: 0,
+                                    productId: product.id.toString(),
+                                    value: product.price,
+                                    status: 1,
+                                }))
+                        },
+                    },
+                });
+    
+                res.data && sessionStorage.setItem('productsSelected', res.data.createOrder.data);
+            } finally {
+                setIsModalConfirmOpen(false);
+                navigate('/queue');
+            }
+        } catch (error) {
+            console.error('Erro ao registrar o pedido: ', error);
         }
     }
 
