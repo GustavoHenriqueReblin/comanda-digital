@@ -40,6 +40,16 @@
             transition: transform 0.2s ease-in-out;
         }
 
+        &.block {
+            cursor: no-drop;
+            opacity: 0.6;
+
+            &:hover {
+                transform: none;
+                transition: none;
+            }
+        }
+
         @media screen and (min-width: 1px) {
             bottom: 10px;
             right: 214px;

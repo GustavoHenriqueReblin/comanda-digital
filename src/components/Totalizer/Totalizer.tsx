@@ -13,9 +13,10 @@ import { useNavigate } from "react-router-dom";
 interface TotalizerProps {
     isVisible: () => boolean | null;
     total: () => string;
+    hasOrderConfirmed?: boolean;
 };
 
-function Totalizer({ isVisible, total }: TotalizerProps) {
+function Totalizer({ isVisible, total, hasOrderConfirmed }: TotalizerProps) {
     const [isModalClearOpen, setIsModalClearOpen] = useState(false);
     const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
     const { setProductsSelected, setResetProducts } = useRememberContext();
@@ -41,8 +42,10 @@ function Totalizer({ isVisible, total }: TotalizerProps) {
 
     const confirmOrder = async () => {
         try {
-            const selectedProducts = JSON.parse(sessionStorage.getItem('productsSelected') || '');
-            const selectedTable = JSON.parse(sessionStorage.getItem('tableSelected') || '');
+            const selectedProductsString = sessionStorage.getItem('productsSelected');
+            const selectedProducts = selectedProductsString ? JSON.parse(selectedProductsString) : '';
+            const selectedTableString = sessionStorage.getItem('tableSelected');
+            const selectedTable = selectedTableString ? JSON.parse(selectedTableString) : '';
 
             try {
                 const res = await createOrder({
@@ -65,7 +68,7 @@ function Totalizer({ isVisible, total }: TotalizerProps) {
                     },
                 });
     
-                res.data && sessionStorage.setItem('productsSelected', res.data.createOrder.data);
+                res.data && sessionStorage.setItem('orderData', JSON.stringify(res.data.createOrder.data));
             } finally {
                 setIsModalConfirmOpen(false);
                 navigate('/queue');
@@ -79,7 +82,7 @@ function Totalizer({ isVisible, total }: TotalizerProps) {
         <>  
             { isVisible() && (
                 <div className="totalizer-container">
-                    <div className="buttons-container" onClick={() => setIsModalClearOpen(true)}>
+                    <div className={`buttons-container ${hasOrderConfirmed ? 'block' : ''}`} onClick={() => {!hasOrderConfirmed && setIsModalClearOpen(true)}}>
                         <div className="button clear">
                             <span><FiTrash /></span>
                         </div>
@@ -87,7 +90,7 @@ function Totalizer({ isVisible, total }: TotalizerProps) {
                     <div className="value-container">
                         Total: <span className="value">{ formattedTotal }</span>
                     </div>
-                    <div className="buttons-container" onClick={() => setIsModalConfirmOpen(true)}>
+                    <div className={`buttons-container ${hasOrderConfirmed ? 'block' : ''}`} onClick={() => {!hasOrderConfirmed && setIsModalConfirmOpen(true)}}>
                         <div className="button confirm">
                             <span><FaCheck /></span>
                         </div>

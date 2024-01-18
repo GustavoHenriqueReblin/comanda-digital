@@ -18,6 +18,7 @@ function Menu() {
     const [getCategories, { data: categoryData }] = useLazyQuery(GetCategories);
     const [getProducts, { data: productData }] = useLazyQuery(GetProducts);
     const [loading, setLoading] = useState(true);
+    const [orderIsConfirmed, setOrderIsConfirmed] = useState(true);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -75,6 +76,9 @@ function Menu() {
   
       if (categoryIds && categoryIds.length > 0) {
         fetchProducts();
+        const orderDataString = sessionStorage.getItem('orderData');
+        const orderData = orderDataString ? JSON.parse(orderDataString) : '';
+        setOrderIsConfirmed(!!orderData && orderData !== null);
       }
     }, [getProducts, productData, categoryIds]);
 
@@ -95,9 +99,11 @@ function Menu() {
                         Número da sua mesa:&nbsp;
                         {sessionTableSelected ? JSON.parse(sessionTableSelected).code : ''}
                       </h2>
-                      <span className="change-table" onClick={() => redirectTo(Redirect.ROOT)}>
-                        <IoRefresh /> &nbsp; Trocar de mesa
-                      </span>
+                      { !orderIsConfirmed && (
+                        <span className="change-table" onClick={() => redirectTo(Redirect.ROOT)}>
+                          <IoRefresh /> &nbsp; Trocar de mesa
+                        </span>
+                      )}
                     </div>
                     { !categoryData
                     ? null
@@ -151,6 +157,7 @@ function Menu() {
                       const totalPrice = selectedProducts.reduce((sumAux: number, product: Product) => sumAux + product.price, 0);
                       return `${totalPrice.toFixed(2)}`;
                     }} 
+                    hasOrderConfirmed={orderIsConfirmed} 
                   />
                 </RememberContext.Provider>
             )}
