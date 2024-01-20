@@ -18,6 +18,12 @@ export type Product = {
     description: string
 };
 
+export type Table = {
+    id: number,
+    code: number,
+    state: number
+};
+
 export enum Redirect {
     ROOT
 };

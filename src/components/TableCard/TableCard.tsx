@@ -1,6 +1,8 @@
 import React from "react";
 import './tableCard.scss';
 import { useNavigate } from 'react-router-dom';
+import { UPDATE_TABLE } from "../../graphql/mutations/table";
+import { useMutation } from "@apollo/client";
 
 interface TableProps {
     id: number;
@@ -10,13 +12,23 @@ interface TableProps {
 
 function TableCard({ id, code, state }: TableProps) {
     const navigate = useNavigate();
+    const [updateTable] = useMutation(UPDATE_TABLE);
 
-    const saveTable = () => {
-        if (state) {
-            const tableObj = { id, code, state };
-            sessionStorage.setItem('tableSelected', JSON.stringify(tableObj));
-            navigate('/menu');
-        }
+    const saveTable = async () => {
+        const newState = !state;
+        const tableObj = { id, code, state: newState };
+        
+        sessionStorage.setItem('tableSelected', JSON.stringify(tableObj));
+        await updateTable({
+            variables: {
+                input: {
+                    id,
+                    code,
+                    state: newState,
+                },
+            },
+        });
+        navigate('/menu');
     };
 
     return (
