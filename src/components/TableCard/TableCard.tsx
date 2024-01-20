@@ -33,7 +33,7 @@ function TableCard({ id, code, state }: TableProps) {
 
     return (
         <>
-            <div onClick={() => saveTable()} className={`table ${state ? 'free' : 'not-free'}`}>
+            <div onClick={() => state && saveTable()} className={`table ${state ? 'free' : 'not-free'}`}>
                 <h2 className="code">{ code }</h2>
             </div>
         </>
