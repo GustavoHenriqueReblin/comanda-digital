@@ -137,7 +137,8 @@ function Menu() {
                                         const foundProduct = selectedProducts.find((product: Product) => product.id === Number(filteredProduct.id));
                                         setProductsSelected(selectedProducts);
                                         return (!!foundProduct);
-                                      }}                                        
+                                      }}  
+                                      hasOrderConfirmed={orderIsConfirmed}                                       
                                     />
                                 )
                             )}

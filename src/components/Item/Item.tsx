@@ -10,9 +10,10 @@ interface ItemProps {
     price: string;
     description: string;
     isSelectedByUser?: () => boolean | null;
+    hasOrderConfirmed?: boolean;
 };
 
-function Item({ id, title, price, description, isSelectedByUser }: ItemProps) {
+function Item({ id, title, price, description, isSelectedByUser, hasOrderConfirmed }: ItemProps) {
     const [isSelected, setIsSelected] = useState(isSelectedByUser !== null ? isSelectedByUser : false);
     const { setProductsSelected, setResetProducts, resetProducts } = useRememberContext();
     const formattedPrice = Number(price).toLocaleString('pt-BR', {
@@ -28,6 +29,10 @@ function Item({ id, title, price, description, isSelectedByUser }: ItemProps) {
     }, [resetProducts, setResetProducts]);
 
     const saveProductState = () => {
+        if (hasOrderConfirmed) {
+            return;
+        }
+
         setIsSelected((prevIsSelected) => {
             const updatedIsSelected = !prevIsSelected;
     
