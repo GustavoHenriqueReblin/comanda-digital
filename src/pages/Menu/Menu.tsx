@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import './menu.scss';
 import CategoryCard from "../../components/CategoryCard/CategoryCard";
@@ -5,7 +6,7 @@ import Item from "../../components/Item/Item";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
 
-import { Product, Redirect, routeTitles } from "../../types/types";
+import { Order, Product, Redirect, routeTitles } from "../../types/types";
 import { RememberContext } from "../../contexts/remember";
 import { useLazyQuery } from '@apollo/client';
 import { GetCategories } from '../../graphql/queries/categoryQueries';
@@ -13,80 +14,95 @@ import { GetProducts } from '../../graphql/queries/productQueries';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IoRefresh } from "react-icons/io5";
 import { Helmet } from "react-helmet";
+import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
+import { useSubscription } from "@apollo/client";
 
 function Menu() {
-    const [getCategories, { data: categoryData }] = useLazyQuery(GetCategories);
-    const [getProducts, { data: productData }] = useLazyQuery(GetProducts);
-    const [loading, setLoading] = useState(true);
-    const [orderIsConfirmed, setOrderIsConfirmed] = useState(true);
-    const navigate = useNavigate();
-    const location = useLocation();
+  const { data: tableStatusData } = useSubscription(CHANGE_TABLE_STATUS);
+  const [getCategories, { data: categoryData }] = useLazyQuery(GetCategories);
+  const [getProducts, { data: productData }] = useLazyQuery(GetProducts);
+  const [loading, setLoading] = useState(true);
+  const [orderIsConfirmed, setOrderIsConfirmed] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    // Usado como filtro para buscar apenas produtos com categorias vinculadas.
-    const [categoryIds, setCategoryIds] = useState<[number] | null>(null);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | []>([]);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_productsSelected, setProductsSelected] = useState<Product[] | []>([]);
-    const [resetProducts, setResetProducts] = useState<boolean>(false);
-    const [sessionTableSelected, setSessionTableSelected] = useState<string | null>(null);
+  // Usado como filtro para buscar apenas produtos com categorias vinculadas.
+  const [categoryIds, setCategoryIds] = useState<[number] | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | []>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_productsSelected, setProductsSelected] = useState<Product[] | []>([]);
+  const [resetProducts, setResetProducts] = useState<boolean>(false);
+  const [sessionTableSelected, setSessionTableSelected] = useState<string | null>(null);
 
-    const redirectTo = (typeRedirect: Redirect) => {
-      if (typeRedirect === Redirect.ROOT) {
-        navigate('/')
+  const redirectTo = (typeRedirect: Redirect) => {
+    if (typeRedirect === Redirect.ROOT) {
+      navigate('/')
+    }
+  };
+
+  const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
+
+  useEffect(() => {
+    const orderDataString = localStorage.getItem('orderData');
+    const orderData = orderDataString ? JSON.parse(orderDataString) : '';
+    if (orderData && orderData !== '') {
+      navigate('/queue');
+    }
+
+    const fetchCategories = async () => {
+      try {
+        if (!categoryData) {
+          const result = await getCategories();
+          if (result.data && result.data.categories) {
+            const ids = result.data.categories.map((category: any) => Number(category.id));
+            setCategoryIds(ids);
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao buscar as categorias:", error);
       }
     };
 
-    const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
+    // Mostra o menu apenas com a mesa selecionada
+    const verifyTable = localStorage.getItem('tableSelected');
+    verifyTable ? setSessionTableSelected(verifyTable) : navigate('/');
+    
+    fetchCategories();
+  }, [getCategories, categoryData, navigate]);
 
-    useEffect(() => {
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        if (!productData) {
+          await getProducts({ variables: { filter: { categoriesIds: categoryIds } } });
+        }
+      } catch (error) {
+        console.error("Erro ao buscar os produtos:", error);
+      } finally {
+        setLoading(false); 
+      }
+    };
+
+    if (categoryIds && categoryIds.length > 0) {
+      fetchProducts();
       const orderDataString = localStorage.getItem('orderData');
       const orderData = orderDataString ? JSON.parse(orderDataString) : '';
-      if (orderData && orderData !== '') {
-        navigate('/queue');
-      }
+      setOrderIsConfirmed(!!orderData && orderData !== null);
+    }
+  }, [getProducts, productData, categoryIds]);
 
-      const fetchCategories = async () => {
-        try {
-          if (!categoryData) {
-            const result = await getCategories();
-            if (result.data && result.data.categories) {
-              const ids = result.data.categories.map((category: any) => Number(category.id));
-              setCategoryIds(ids);
-            }
-          }
-        } catch (error) {
-          console.error("Erro ao buscar as categorias:", error);
-        }
-      };
-
-      // Mostra o menu apenas com a mesa selecionada
-      const verifyTable = localStorage.getItem('tableSelected');
-      verifyTable ? setSessionTableSelected(verifyTable) : navigate('/');
-      
-      fetchCategories();
-    }, [getCategories, categoryData, navigate]);
-  
-    useEffect(() => {
-      const fetchProducts = async () => {
-        try {
-          if (!productData) {
-            await getProducts({ variables: { filter: { categoriesIds: categoryIds } } });
-          }
-        } catch (error) {
-          console.error("Erro ao buscar os produtos:", error);
-        } finally {
-          setLoading(false); 
-        }
-      };
-  
-      if (categoryIds && categoryIds.length > 0) {
-        fetchProducts();
-        const orderDataString = localStorage.getItem('orderData');
-        const orderData = orderDataString ? JSON.parse(orderDataString) : '';
-        setOrderIsConfirmed(!!orderData && orderData !== null);
+  useEffect(() => { 
+    if (tableStatusData) {
+      const orderDataString = localStorage.getItem('orderData');
+      const orderData = orderDataString ? JSON.parse(orderDataString) : '';
+      const expiredOrder = tableStatusData.ChangeTableStatus.find((order: Order) => order.id === orderData.id);
+      if (!!expiredOrder) {
+        navigate('/');
       }
-    }, [getProducts, productData, categoryIds]);
+    }    
+    setLoading(false); 
+  }, [tableStatusData]);
 
     return (
         <>  
