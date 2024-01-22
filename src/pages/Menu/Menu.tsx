@@ -40,6 +40,12 @@ function Menu() {
     const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
 
     useEffect(() => {
+      const orderDataString = sessionStorage.getItem('orderData');
+      const orderData = orderDataString ? JSON.parse(orderDataString) : '';
+      if (orderData && orderData !== '') {
+        navigate('/queue');
+      }
+
       const fetchCategories = async () => {
         try {
           if (!categoryData) {
@@ -65,7 +71,7 @@ function Menu() {
       const fetchProducts = async () => {
         try {
           if (!productData) {
-            await getProducts({ variables: { filter: { idCategory: categoryIds } } });
+            await getProducts({ variables: { filter: { categoriesIds: categoryIds } } });
           }
         } catch (error) {
           console.error("Erro ao buscar os produtos:", error);

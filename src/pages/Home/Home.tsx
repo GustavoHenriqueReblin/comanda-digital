@@ -74,7 +74,7 @@ function Home() {
       const orderDataString = sessionStorage.getItem('orderData');
       const orderData = orderDataString ? JSON.parse(orderDataString) : '';
       if (orderData && orderData !== '') {
-        navigate('/menu');
+        navigate('/queue');
       } else {
         updateTableSelected()
           .then(() => {

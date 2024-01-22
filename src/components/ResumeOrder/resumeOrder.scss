@@ -1,0 +1,23 @@
+.fix-widths {
+    @media screen and (min-width: 1px) {
+        width: 100%;
+    }
+
+    @media screen and (min-width: 1024px) {
+        width: 60%;
+    }
+}
+
+.title {
+    @extend .fix-widths;
+    font-weight: 900;
+    margin-top: 24px;
+    font-size: x-large;
+}
+
+.info {
+    @extend .fix-widths;
+    margin: 20px 0;
+    padding-left: 25px;
+    font-size: medium;
+}

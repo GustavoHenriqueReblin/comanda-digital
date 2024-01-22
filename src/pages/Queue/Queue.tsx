@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet";
 import { useLocation } from "react-router-dom";
 import { Order, routeTitles } from "../../types/types";
 import Loading from "../../components/Loading";
+import ResumeOrder from "../../components/ResumeOrder/ResumeOrder";
 
 function Queue() {
     const location = useLocation();
@@ -32,19 +33,15 @@ function Queue() {
                     <Helmet>
                         <title>{pageTitle}</title>
                     </Helmet>
-                    <h2 className="title">Seu pedido já foi confirmado!</h2>
-                    <span className="info">Em alguns instantes, um dos nossos garçons irá vir recepcioná-los.</span>
-                    <br/>
-                    <span className="info">Um resumo do seu pedido:</span>
-                    <div className="resume-container">
-                        { orderData 
-                        ? (
-                            <span>{JSON.stringify(orderData)}</span>
-                        ) 
-                        : (
-                            <></>
-                        )} 
-                    </div>
+                    { orderData 
+                    ? (
+                        <div className="resume-container">
+                            <ResumeOrder orderData={orderData} />
+                        </div>
+                    ) 
+                    : (
+                        <></>
+                    )} 
                 </div>
             )}
         </>
