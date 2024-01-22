@@ -44,7 +44,7 @@ function Home() {
 
       const updateTableSelected = async () => {
         try {
-          const tableString = sessionStorage.getItem('tableSelected');
+          const tableString = localStorage.getItem('tableSelected');
           if (tableString) {
             return new Promise((resolve, reject) => {
               const table = JSON.parse(tableString);
@@ -71,14 +71,14 @@ function Home() {
         }
       };
 
-      const orderDataString = sessionStorage.getItem('orderData');
+      const orderDataString = localStorage.getItem('orderData');
       const orderData = orderDataString ? JSON.parse(orderDataString) : '';
       if (orderData && orderData !== '') {
         navigate('/queue');
       } else {
         updateTableSelected()
           .then(() => {
-            sessionStorage.removeItem('tableSelected');
+            localStorage.removeItem('tableSelected');
             return fetchTables();
           })
           .then((data) => {

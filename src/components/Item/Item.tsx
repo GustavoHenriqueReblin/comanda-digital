@@ -49,7 +49,7 @@ function Item({ id, title, price, description, isSelectedByUser, hasOrderConfirm
                     ? [...actualProducts, newProduct]
                     : actualProducts.filter(product => Number(product.id) !== Number(id));
 
-                sessionStorage.setItem('productsSelected', JSON.stringify(updatedProducts));
+                    localStorage.setItem('productsSelected', JSON.stringify(updatedProducts));
                 return updatedProducts;
             });
 

@@ -15,7 +15,7 @@ function Queue() {
 
     useEffect(() => { 
         if (!orderData) {
-            const orderDataString = sessionStorage.getItem('orderData');
+            const orderDataString = localStorage.getItem('orderData');
             const orderData = orderDataString ? JSON.parse(orderDataString) : '';
             if (orderData && orderData !== '') {
                 setOrderData(orderData);

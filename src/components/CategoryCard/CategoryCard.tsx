@@ -25,7 +25,7 @@ function Card({ id, title, children, isExpandedByUser }: CardProps) {
                     ? [...actualIds, id] // Insere o id da categoria que foi expandida
                     : actualIds.filter((existingId: number) => existingId !== id); // Remove o id da categoria que foi expandida
     
-                sessionStorage.setItem('categoryExpandedIds', JSON.stringify(updatedIds));
+                localStorage.setItem('categoryExpandedIds', JSON.stringify(updatedIds));
                 return updatedIds as [number];
             });
     

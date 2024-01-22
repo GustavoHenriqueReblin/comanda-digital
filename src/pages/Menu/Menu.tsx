@@ -40,7 +40,7 @@ function Menu() {
     const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
 
     useEffect(() => {
-      const orderDataString = sessionStorage.getItem('orderData');
+      const orderDataString = localStorage.getItem('orderData');
       const orderData = orderDataString ? JSON.parse(orderDataString) : '';
       if (orderData && orderData !== '') {
         navigate('/queue');
@@ -61,7 +61,7 @@ function Menu() {
       };
 
       // Mostra o menu apenas com a mesa selecionada
-      const verifyTable = sessionStorage.getItem('tableSelected');
+      const verifyTable = localStorage.getItem('tableSelected');
       verifyTable ? setSessionTableSelected(verifyTable) : navigate('/');
       
       fetchCategories();
@@ -82,7 +82,7 @@ function Menu() {
   
       if (categoryIds && categoryIds.length > 0) {
         fetchProducts();
-        const orderDataString = sessionStorage.getItem('orderData');
+        const orderDataString = localStorage.getItem('orderData');
         const orderData = orderDataString ? JSON.parse(orderDataString) : '';
         setOrderIsConfirmed(!!orderData && orderData !== null);
       }
@@ -119,7 +119,7 @@ function Menu() {
                           key={category.id} 
                           title={category.name}
                           isExpandedByUser={() => {
-                            const sessionIds = sessionStorage.getItem('categoryExpandedIds');
+                            const sessionIds = localStorage.getItem('categoryExpandedIds');
                             const ids = sessionIds ? JSON.parse(sessionIds) : [];
                             setCategoryExpandedIds(ids);
                             return !!(ids.length > 0) && ids.includes(category.id); 
@@ -138,7 +138,7 @@ function Menu() {
                                       price={filteredProduct.price}
                                       description={filteredProduct.description}
                                       isSelectedByUser={() => {
-                                        const sessionProducts = sessionStorage.getItem('productsSelected');
+                                        const sessionProducts = localStorage.getItem('productsSelected');
                                         const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
                                         const foundProduct = selectedProducts.find((product: Product) => product.id === Number(filteredProduct.id));
                                         setProductsSelected(selectedProducts);
@@ -154,12 +154,12 @@ function Menu() {
                   </div>
                   <Totalizer 
                     isVisible={() => {
-                      const sessionIds = sessionStorage.getItem('productsSelected');
+                      const sessionIds = localStorage.getItem('productsSelected');
                       const ids = sessionIds ? JSON.parse(sessionIds) : [];
                       return ids && !!(ids.length > 0);
                     }} 
                     total={() => {
-                      const sessionProducts = sessionStorage.getItem('productsSelected');
+                      const sessionProducts = localStorage.getItem('productsSelected');
                       const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
                       const totalPrice = selectedProducts.reduce((sumAux: number, product: Product) => sumAux + product.price, 0);
                       return `${totalPrice.toFixed(2)}`;

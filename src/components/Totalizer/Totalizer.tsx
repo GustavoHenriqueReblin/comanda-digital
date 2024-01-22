@@ -31,7 +31,7 @@ function Totalizer({ isVisible, total, hasOrderConfirmed }: TotalizerProps) {
         try {
             setProductsSelected((prevProducts) => {
                 const updatedProducts: Product[] | [] = [];
-                sessionStorage.setItem('productsSelected', JSON.stringify(updatedProducts));
+                localStorage.setItem('productsSelected', JSON.stringify(updatedProducts));
                 setResetProducts(true);
                 return updatedProducts;
             });
@@ -42,9 +42,9 @@ function Totalizer({ isVisible, total, hasOrderConfirmed }: TotalizerProps) {
 
     const confirmOrder = async () => {
         try {
-            const selectedProductsString = sessionStorage.getItem('productsSelected');
+            const selectedProductsString = localStorage.getItem('productsSelected');
             const selectedProducts = selectedProductsString ? JSON.parse(selectedProductsString) : '';
-            const selectedTableString = sessionStorage.getItem('tableSelected');
+            const selectedTableString = localStorage.getItem('tableSelected');
             const selectedTable = selectedTableString ? JSON.parse(selectedTableString) : '';
 
             try {
@@ -68,7 +68,7 @@ function Totalizer({ isVisible, total, hasOrderConfirmed }: TotalizerProps) {
                     },
                 });
     
-                res.data && sessionStorage.setItem('orderData', JSON.stringify(res.data.createOrder.data));
+                res.data && localStorage.setItem('orderData', JSON.stringify(res.data.createOrder.data));
             } finally {
                 setIsModalConfirmOpen(false);
                 navigate('/queue');

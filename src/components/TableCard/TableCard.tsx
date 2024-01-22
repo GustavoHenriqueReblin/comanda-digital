@@ -18,7 +18,7 @@ function TableCard({ id, code, state }: TableProps) {
         const newState = !state;
         const tableObj = { id, code, state: newState };
         
-        sessionStorage.setItem('tableSelected', JSON.stringify(tableObj));
+        localStorage.setItem('tableSelected', JSON.stringify(tableObj));
         await updateTable({
             variables: {
                 input: {
