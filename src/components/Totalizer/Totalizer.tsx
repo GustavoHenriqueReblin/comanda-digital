@@ -54,6 +54,7 @@ function Totalizer({ isVisible, total, hasOrderConfirmed }: TotalizerProps) {
                             id: 0,
                             bartenderId: -1,
                             tableId: selectedTable.id,
+                            tableCode: selectedTable.code,
                             date: getDateTime(),
                             value: Number(total()),
                             status: 0,

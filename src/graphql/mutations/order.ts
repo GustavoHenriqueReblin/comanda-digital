@@ -7,6 +7,7 @@ export const CREATE_ORDER = gql`
                 id
                 bartenderId
                 tableId
+                tableCode
                 value
                 date
                 status
