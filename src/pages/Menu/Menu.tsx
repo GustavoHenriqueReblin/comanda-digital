@@ -6,7 +6,7 @@ import Item from "../../components/Item/Item";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
 
-import { Order, Product, Redirect, routeTitles } from "../../types/types";
+import { Order, Product, Redirect, routeTitles, Table } from "../../types/types";
 import { RememberContext } from "../../contexts/remember";
 import { useLazyQuery } from '@apollo/client';
 import { GetCategories } from '../../graphql/queries/categoryQueries';
@@ -94,10 +94,11 @@ function Menu() {
 
   useEffect(() => { 
     if (tableStatusData) {
-      const orderDataString = localStorage.getItem('orderData');
-      const orderData = orderDataString ? JSON.parse(orderDataString) : '';
-      const expiredOrder = tableStatusData.ChangeTableStatus.find((order: Order) => order.id === orderData.id);
-      if (!!expiredOrder) {
+      const tableSelectedString = localStorage.getItem('tableSelected');
+      const tableSelected = tableSelectedString ? JSON.parse(tableSelectedString) : '';
+      const expiredTable = tableStatusData.ChangeTableStatus.find((table: any) => (table.data as Table).id === tableSelected.id);
+
+      if (!!expiredTable && expiredTable.data.state) { // Caso a mesa selecionada tenha sido atualizada para livre, redireciona
         navigate('/');
       }
     }    
