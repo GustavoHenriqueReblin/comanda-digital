@@ -1,13 +1,14 @@
-import React, { useState } from "react";
 import './totalizer.scss';
+import Modal from "../Modal/Modal";
+import { getDateTime } from "../../helper";
+import { Product } from "../../types/types";
+import { useRememberContext } from "../../contexts/remember";
+import { CREATE_ORDER } from "../../graphql/mutations/order";
+
+import React, { useState } from "react";
 import { FiTrash } from "react-icons/fi";
 import { FaCheck } from "react-icons/fa";
-import Modal from "../Modal/Modal";
-import { useRememberContext } from "../../contexts/remember";
-import { Product } from "../../types/types";
-import { CREATE_ORDER } from "../../graphql/mutations/order";
 import { useMutation } from "@apollo/client";
-import { getDateTime } from "../../helper";
 import { useNavigate } from "react-router-dom";
 
 interface TotalizerProps {

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
 import './categoryCard.scss';
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useRememberContext } from "../../contexts/remember";
+
+import React, { useState } from "react";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 interface CardProps {
     id: number;

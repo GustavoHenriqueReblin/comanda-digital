@@ -1,7 +1,8 @@
-import React from "react";
 import './tableCard.scss';
-import { useNavigate } from 'react-router-dom';
 import { UPDATE_TABLE } from "../../graphql/mutations/table";
+
+import React from "react";
+import { useNavigate } from 'react-router-dom';
 import { useMutation } from "@apollo/client";
 
 interface TableProps {

@@ -1,5 +1,5 @@
-import React, { createContext, useContext } from "react";
 import { Product } from "../types/types";
+import React, { createContext, useContext } from "react";
 
 interface RememberContextProps {
     setProductsSelected: React.Dispatch<React.SetStateAction<Product[] | []>>;

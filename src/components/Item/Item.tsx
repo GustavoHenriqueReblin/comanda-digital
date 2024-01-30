@@ -1,8 +1,9 @@
+import './item.scss';
+import { Product } from "../../types/types";
+import { useRememberContext } from "../../contexts/remember";
+
 import React, { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
-import { useRememberContext } from "../../contexts/remember";
-import { Product } from "../../types/types";
-import './item.scss';
 
 interface ItemProps {
     id: number;

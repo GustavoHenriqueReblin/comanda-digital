@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
 import './resumeOrder.scss';
-
-import { GetProducts } from "../../graphql/queries/productQueries";
-import { useLazyQuery } from "@apollo/client";
 import { Order, Product } from "../../types/types";
+import { GetProducts } from "../../graphql/queries/productQueries";
+
+import React, { useEffect, useState } from "react";
+import { useLazyQuery } from "@apollo/client";
+
 
 interface ResumeOrderProps {
     orderData: Order

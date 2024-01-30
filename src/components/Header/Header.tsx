@@ -1,7 +1,8 @@
+import './header.scss';
+import { Redirect } from "../../types/types";
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Redirect } from "../../types/types";
-import './header.scss';
 
 function Header() {
     const navigate = useNavigate();

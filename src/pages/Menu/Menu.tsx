@@ -1,20 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
 import './menu.scss';
+import React, { useEffect, useState } from "react";
 import CategoryCard from "../../components/CategoryCard/CategoryCard";
 import Item from "../../components/Item/Item";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
-
-import { Order, Product, Redirect, routeTitles, Table } from "../../types/types";
 import { RememberContext } from "../../contexts/remember";
-import { useLazyQuery } from '@apollo/client';
+import { Order, Product, Redirect, routeTitles, Table } from "../../types/types";
 import { GetCategories } from '../../graphql/queries/categoryQueries';
 import { GetProducts } from '../../graphql/queries/productQueries';
+import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
+
+import { useLazyQuery } from '@apollo/client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IoRefresh } from "react-icons/io5";
 import { Helmet } from "react-helmet";
-import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
 import { useSubscription } from "@apollo/client";
 
 function Menu() {

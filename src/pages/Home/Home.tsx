@@ -1,15 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useLazyQuery, useMutation, useSubscription } from "@apollo/client";
 import './home.scss';
-import React, { useEffect, useState } from "react";
+import Loading from "../../components/Loading";
+import { routeTitles, Table } from "../../types/types";
 import TableCard from "../../components/TableCard/TableCard";
 import { GetTables } from "../../graphql/queries/tableQueries";
-import { useLocation, useNavigate } from "react-router-dom";
-import { routeTitles, Table } from "../../types/types";
-import { Helmet } from "react-helmet";
-import Loading from "../../components/Loading";
-import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
 import { UPDATE_TABLE } from "../../graphql/mutations/table";
+import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
+
+import React, { useEffect, useState } from "react";
+import { useLazyQuery, useMutation, useSubscription } from "@apollo/client";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 function Home() {
   const [getTables, { data: tableData }] = useLazyQuery(GetTables);

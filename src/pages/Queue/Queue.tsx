@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
 import './queue.scss';
-
-import { Helmet } from "react-helmet";
-import { useLocation } from "react-router-dom";
-import { Order, routeTitles } from "../../types/types";
 import Loading from "../../components/Loading";
 import ResumeOrder from "../../components/ResumeOrder/ResumeOrder";
+import { Order, routeTitles } from "../../types/types";
+
+import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
+import { useLocation } from "react-router-dom";
 
 function Queue() {
     const location = useLocation();

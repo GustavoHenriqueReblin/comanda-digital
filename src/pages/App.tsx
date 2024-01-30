@@ -1,10 +1,11 @@
-import React from "react";
-import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Home from './Home/Home';
-import Header from "../components/Header/Header";
-import ResponsiveProvider from "../components/ResponsiveProvider";
 import Menu from "./Menu/Menu";
 import Queue from "./Queue/Queue";
+import Header from "../components/Header/Header";
+import ResponsiveProvider from "../components/ResponsiveProvider";
+
+import React from "react";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
  
 function App() {
   return (
