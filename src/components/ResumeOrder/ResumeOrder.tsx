@@ -49,7 +49,7 @@ function ResumeOrder({ orderData }: ResumeOrderProps) {
                     { productData && productData.length > 0
                     ? (
                         productData.map((product: any) => (
-                            <span>{product.name}</span>
+                            <span key={product.id}>{product.name}</span>
                         ))) 
                     : (
                         <></>
