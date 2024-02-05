@@ -3,19 +3,22 @@ import Loading from "../../components/Loading";
 import ResumeOrder from "../../components/ResumeOrder/ResumeOrder";
 import { Order, routeTitles } from "../../types/types";
 import { GetOrder } from '../../graphql/queries/order';
+import { CHANGE_ORDER_STATUS } from '../../graphql/subscriptions/order';
 
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useSubscription } from '@apollo/client';
 
 function Queue() {
-    const location = useLocation();
-    const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
     const [orderData, setOrderData] = useState<Order | null>(null);
     const [loading, setLoading] = useState(true);
-    const [getOrder] = useLazyQuery(GetOrder);
     const navigate = useNavigate();
+    const location = useLocation();
+    const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
+
+    const [getOrder] = useLazyQuery(GetOrder);
+    const { data: subscriptionOrdersData } = useSubscription(CHANGE_ORDER_STATUS);
 
     useEffect(() => { 
         const verifyOrder = async (orderId: Number) => {
@@ -55,6 +58,27 @@ function Queue() {
             }
         }    
     }, [orderData, setOrderData]);
+
+    useEffect(() => { 
+        if (subscriptionOrdersData && subscriptionOrdersData.ChangeOrderStatus) {
+            const orderDataString = localStorage.getItem('orderData');
+            const orderData = orderDataString ? JSON.parse(orderDataString) : '';
+    
+            if (orderData && orderData !== '') {
+                const findedOrder = subscriptionOrdersData.ChangeOrderStatus.find(
+                    (order: any) => order.data && order.data.id === orderData.id && order.data.status === 4
+                );
+    
+                // Caso o pedido local seja cancelado, volta automaticamente para a home
+                if (findedOrder) {
+                    localStorage.removeItem('orderData');
+                    localStorage.removeItem('categoryExpandedIds');
+                    localStorage.removeItem('productsSelected');
+                    navigate('/');
+                }
+            }
+        }
+    }, [subscriptionOrdersData]);
 
     return (
         <>
