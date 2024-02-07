@@ -26,8 +26,6 @@ function Menu() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Usado como filtro para buscar apenas produtos com categorias vinculadas.
-  const [categoryIds, setCategoryIds] = useState<[number] | null>(null);
   const [categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | null>(null);
   const [productsSelected, setProductsSelected] = useState<Product[] | null>(null);
   const [resetProducts, setResetProducts] = useState<boolean>(false);
@@ -44,51 +42,31 @@ function Menu() {
   useEffect(() => {
     const orderDataString = localStorage.getItem('orderData');
     const orderData = orderDataString ? JSON.parse(orderDataString) : '';
-    if (orderData && orderData !== '') {
-      navigate('/queue');
-    }
+    setOrderIsConfirmed(!!orderData && orderData !== null);
+    (orderData && orderData !== '') && navigate('/queue');
 
-    const fetchCategories = async () => {
-      try {
-        if (!categoryData) {
-          const result = await getCategories();
-          if (result.data && result.data.categories) {
-            const ids = result.data.categories.map((category: any) => Number(category.id));
-            setCategoryIds(ids);
+    const localTable = localStorage.getItem('tableSelected');
+    localTable ? setSessionTableSelected(localTable) : navigate('/');
+
+    const fetchData = async () => {
+      if (!categoryData) {
+        getCategories()
+        .then((res) => {
+          const categoryIds = res.data.categories.map((category: any) => Number(category.id));
+
+          if (!productData) { 
+            getProducts({ variables: { filter: { categoriesIds: categoryIds } } })
+              .then(() => {
+                setLoading(false); 
+              })
+              .catch((error) => {console.error("Erro ao buscar os produtos:", error)});
           }
-        }
-      } catch (error) {
-        console.error("Erro ao buscar as categorias:", error);
+        }).catch((error) => {console.error("Erro ao buscar as categorias:", error)}); 
       }
     };
-
-    // Mostra o menu apenas com a mesa selecionada
-    const verifyTable = localStorage.getItem('tableSelected');
-    verifyTable ? setSessionTableSelected(verifyTable) : navigate('/');
     
-    fetchCategories();
-  }, [getCategories, categoryData, navigate]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        if (!productData) {
-          await getProducts({ variables: { filter: { categoriesIds: categoryIds } } });
-        }
-      } catch (error) {
-        console.error("Erro ao buscar os produtos:", error);
-      } finally {
-        setLoading(false); 
-      }
-    };
-
-    if (categoryIds && categoryIds.length > 0) {
-      fetchProducts();
-      const orderDataString = localStorage.getItem('orderData');
-      const orderData = orderDataString ? JSON.parse(orderDataString) : '';
-      setOrderIsConfirmed(!!orderData && orderData !== null);
-    }
-  }, [getProducts, productData, categoryIds]);
+    fetchData();
+  }, [productData, categoryData]);
 
   useEffect(() => { 
     if (tableStatusData) {
@@ -100,7 +78,6 @@ function Menu() {
         navigate('/');
       }
     }    
-    setLoading(false); 
   }, [tableStatusData]);
 
   useEffect(() => {
