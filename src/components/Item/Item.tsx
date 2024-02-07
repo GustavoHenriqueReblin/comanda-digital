@@ -8,9 +8,9 @@ import { FaCheck } from "react-icons/fa";
 interface ItemProps {
     id: number;
     title: string;
-    price: string;
+    price: number;
     description: string;
-    isSelectedByUser?: () => boolean | null;
+    isSelectedByUser?: () => boolean | undefined;
     hasOrderConfirmed?: boolean;
 };
 

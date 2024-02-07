@@ -2,15 +2,15 @@ import { Product } from "../types/types";
 import React, { createContext, useContext } from "react";
 
 interface RememberContextProps {
-    setProductsSelected: React.Dispatch<React.SetStateAction<Product[] | []>>;
-    setCategoryExpandedIds: React.Dispatch<React.SetStateAction<[number] | []>>;
+    setProductsSelected: React.Dispatch<React.SetStateAction<Product[] | null>>;
+    setCategoryExpandedIds: React.Dispatch<React.SetStateAction<[number] | null>>;
     resetProducts: boolean,
     setResetProducts: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const RememberContext = createContext<RememberContextProps>({
-    setProductsSelected: () => {},
-    setCategoryExpandedIds: () => {},
+    setProductsSelected: () => {return null},
+    setCategoryExpandedIds: () => {return null},
     resetProducts: false,
     setResetProducts: () => {},
 });

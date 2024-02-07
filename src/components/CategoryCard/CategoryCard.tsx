@@ -8,7 +8,7 @@ interface CardProps {
     id: number;
     title: string;
     children: any;
-    isExpandedByUser?: () => boolean | null;
+    isExpandedByUser?: () => boolean | undefined;
 };
 
 function Card({ id, title, children, isExpandedByUser }: CardProps) {

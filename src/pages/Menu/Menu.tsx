@@ -6,7 +6,7 @@ import Item from "../../components/Item/Item";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
 import { RememberContext } from "../../contexts/remember";
-import { Order, Product, Redirect, routeTitles, Table } from "../../types/types";
+import { Category, Order, Product, Redirect, routeTitles, Table } from "../../types/types";
 import { GetCategories } from '../../graphql/queries/categoryQueries';
 import { GetProducts } from '../../graphql/queries/productQueries';
 import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
@@ -28,10 +28,8 @@ function Menu() {
 
   // Usado como filtro para buscar apenas produtos com categorias vinculadas.
   const [categoryIds, setCategoryIds] = useState<[number] | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | []>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_productsSelected, setProductsSelected] = useState<Product[] | []>([]);
+  const [categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | null>(null);
+  const [productsSelected, setProductsSelected] = useState<Product[] | null>(null);
   const [resetProducts, setResetProducts] = useState<boolean>(false);
   const [sessionTableSelected, setSessionTableSelected] = useState<string | null>(null);
 
@@ -105,88 +103,91 @@ function Menu() {
     setLoading(false); 
   }, [tableStatusData]);
 
-    return (
-        <>  
-            { loading 
-            ? ( <Loading title="Aguarde, carregando cardápio..." /> ) 
-            : (
-                <RememberContext.Provider value={
-                  { setCategoryExpandedIds, setProductsSelected, resetProducts, setResetProducts }
-                }>
-                  <Helmet>
-                    <title>{pageTitle}</title>
-                  </Helmet>
-                  <div className="cards-container">
-                    <div className="table-info">
-                      <h2 className="table-title">
-                        Número da sua mesa:&nbsp;
-                        {sessionTableSelected ? JSON.parse(sessionTableSelected).code : ''}
-                      </h2>
-                      { !orderIsConfirmed && (
-                        <span className="change-table" onClick={() => redirectTo(Redirect.ROOT)}>
-                          <IoRefresh /> &nbsp; Trocar de mesa
-                        </span>
+  useEffect(() => {
+    const localCategoryIds = localStorage.getItem('categoryExpandedIds');
+    const categoryIds = localCategoryIds ? JSON.parse(localCategoryIds) : [];
+    setCategoryExpandedIds(categoryIds);
+
+    const localProductsIds = localStorage.getItem('productsSelected');
+    const selectedProducts = localProductsIds ? JSON.parse(localProductsIds) : [];
+    setProductsSelected(selectedProducts);
+  }, []);
+
+  return (
+    <>  
+      { loading 
+      ? ( <Loading title="Aguarde, carregando cardápio..." /> ) 
+      : (
+          <RememberContext.Provider value={
+            { setCategoryExpandedIds, setProductsSelected, resetProducts, setResetProducts }
+          }>
+            <Helmet>
+              <title>{pageTitle}</title>
+            </Helmet>
+            <div className="cards-container">
+              <div className="table-info">
+                <h2 className="table-title">
+                  Número da sua mesa:&nbsp;
+                  {sessionTableSelected ? JSON.parse(sessionTableSelected).code : ''}
+                </h2>
+                { !orderIsConfirmed && (
+                  <span className="change-table" onClick={() => redirectTo(Redirect.ROOT)}>
+                    <IoRefresh /> &nbsp; Trocar de mesa
+                  </span>
+                )}
+              </div>
+              { !categoryData
+              ? null
+              : categoryData.categories.map((category: Category) => (
+                  <CategoryCard 
+                    id={category.id}
+                    key={category.id} 
+                    title={category.name}
+                    isExpandedByUser={() => {
+                      return categoryExpandedIds?.includes(category.id);
+                    }}
+                  >
+                    <div className="item-container">
+                      { productData &&
+                        productData.products &&
+                        productData.products
+                        .filter((product: Product) => product.idCategory === category.id)
+                        .map((filteredProduct: Product) => (
+                            <Item
+                              key={filteredProduct.id}
+                              id={filteredProduct.id}
+                              title={filteredProduct.name}
+                              price={filteredProduct.price}
+                              description={filteredProduct.description}
+                              isSelectedByUser={() => {
+                                return productsSelected?.some((product: Product) => product.id === Number(filteredProduct.id)) ?? false;
+                              }} 
+                              hasOrderConfirmed={orderIsConfirmed}                                       
+                            />
+                        )
                       )}
                     </div>
-                    { !categoryData
-                    ? null
-                    : categoryData.categories.map((category: any) => (
-                        <CategoryCard 
-                          id={category.id}
-                          key={category.id} 
-                          title={category.name}
-                          isExpandedByUser={() => {
-                            const sessionIds = localStorage.getItem('categoryExpandedIds');
-                            const ids = sessionIds ? JSON.parse(sessionIds) : [];
-                            setCategoryExpandedIds(ids);
-                            return !!(ids.length > 0) && ids.includes(category.id); 
-                          }}
-                        >
-                            <div className="item-container">
-                            {   productData &&
-                                productData.products &&
-                                productData.products
-                                .filter((product: any) => product.idCategory === category.id)
-                                .map((filteredProduct: any) => (
-                                    <Item
-                                      key={filteredProduct.id}
-                                      id={filteredProduct.id}
-                                      title={filteredProduct.name}
-                                      price={filteredProduct.price}
-                                      description={filteredProduct.description}
-                                      isSelectedByUser={() => {
-                                        const sessionProducts = localStorage.getItem('productsSelected');
-                                        const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
-                                        const foundProduct = selectedProducts.find((product: Product) => product.id === Number(filteredProduct.id));
-                                        setProductsSelected(selectedProducts);
-                                        return (!!foundProduct);
-                                      }}  
-                                      hasOrderConfirmed={orderIsConfirmed}                                       
-                                    />
-                                )
-                            )}
-                            </div>
-                        </CategoryCard>
-                    ))}
-                  </div>
-                  <Totalizer 
-                    isVisible={() => {
-                      const sessionIds = localStorage.getItem('productsSelected');
-                      const ids = sessionIds ? JSON.parse(sessionIds) : [];
-                      return ids && !!(ids.length > 0);
-                    }} 
-                    total={() => {
-                      const sessionProducts = localStorage.getItem('productsSelected');
-                      const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
-                      const totalPrice = selectedProducts.reduce((sumAux: number, product: Product) => sumAux + product.price, 0);
-                      return `${totalPrice.toFixed(2)}`;
-                    }} 
-                    hasOrderConfirmed={orderIsConfirmed} 
-                  />
-                </RememberContext.Provider>
-            )}
-        </>
-    )
+                  </CategoryCard>
+              ))}
+            </div>
+            <Totalizer 
+              isVisible={() => {
+                const sessionIds = localStorage.getItem('productsSelected');
+                const ids = sessionIds ? JSON.parse(sessionIds) : [];
+                return ids && !!(ids.length > 0);
+              }} 
+              total={() => {
+                const sessionProducts = localStorage.getItem('productsSelected');
+                const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
+                const totalPrice = selectedProducts.reduce((sumAux: number, product: Product) => sumAux + product.price, 0);
+                return `${totalPrice.toFixed(2)}`;
+              }} 
+              hasOrderConfirmed={orderIsConfirmed} 
+            />
+          </RememberContext.Provider>
+      )}
+    </>
+  )
 }
 
 export default Menu;
