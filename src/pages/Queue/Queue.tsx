@@ -45,7 +45,7 @@ function Queue() {
                 verifyOrder(orderData.id).then((res) => {
                     if (res && res !== null && availableStatus.includes(res.status)) {
                         loading && setLoading(false); 
-                        setOrderData(orderData);
+                        setOrderData(res);
                     } else {
                         localStorage.removeItem('orderData');
                         localStorage.removeItem('categoryExpandedIds');
@@ -66,15 +66,20 @@ function Queue() {
     
             if (orderData && orderData !== '') {
                 const findedOrder = subscriptionOrdersData.ChangeOrderStatus.find(
-                    (order: any) => order.data && order.data.id === orderData.id && order.data.status === 4
+                    (order: any) => order.data && order.data.id === orderData.id 
                 );
-    
-                // Caso o pedido local seja cancelado, volta automaticamente para a home
+                
                 if (findedOrder) {
-                    localStorage.removeItem('orderData');
-                    localStorage.removeItem('categoryExpandedIds');
-                    localStorage.removeItem('productsSelected');
-                    navigate('/');
+                    if (findedOrder.data.status === 4) {
+                        // Caso o pedido local seja cancelado, volta automaticamente para a home
+                        localStorage.removeItem('orderData');
+                        localStorage.removeItem('categoryExpandedIds');
+                        localStorage.removeItem('productsSelected');
+                        navigate('/');
+                    } else if (findedOrder.data.status === 1 && findedOrder.data.bartenderId > 0) {
+                        // Caso o pedido local tenha sido resgatado
+                        setOrderData(findedOrder.data);
+                    }
                 }
             }
         }

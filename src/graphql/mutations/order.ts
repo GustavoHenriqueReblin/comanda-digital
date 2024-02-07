@@ -6,6 +6,7 @@ export const CREATE_ORDER = gql`
             data {
                 id
                 bartenderId
+                bertenderName
                 tableId
                 tableCode
                 value

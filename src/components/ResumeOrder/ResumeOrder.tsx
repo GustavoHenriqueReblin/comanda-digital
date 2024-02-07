@@ -6,7 +6,6 @@ import { GetProducts } from "../../graphql/queries/productQueries";
 import React, { useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 
-
 interface ResumeOrderProps {
     orderData: Order
 };
@@ -40,12 +39,26 @@ function ResumeOrder({ orderData }: ResumeOrderProps) {
         }
     }, [productData, getProducts]);
 
+    useEffect(() => { 
+        setProductData(null);
+    }, [orderData]);
+
     return (
         <>  
             { orderData ? (
                 <>
-                    <h2 className="title">Legal, seu pedido já foi confirmado!</h2>
-                    <div className="info">Em alguns instantes, um dos nossos garçons irá vir recepcioná-lo(s).</div>
+                    {orderData?.bertenderName !== null ? (
+                        <>
+                            <h2 className="title">Legal, seu pedido já foi resgatado!</h2>
+                            <div className="info">O garçom {orderData.bertenderName} está vindo até sua mesa.</div>
+                        </>
+                    ) : (
+                        <>
+                            <h2 className="title">Legal, seu pedido já foi confirmado!</h2>
+                            <div className="info">Em alguns instantes, um dos nossos garçons irá vir recepcioná-lo(s).</div>
+                        </>
+                    )}
+                    
                     <div className="info">Um resumo do seu pedido:</div>
                     { productData && productData.length > 0
                     ? (

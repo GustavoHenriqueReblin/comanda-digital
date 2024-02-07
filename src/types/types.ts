@@ -39,6 +39,7 @@ export type OrderItems = {
 export type Order = {
     id: number,
     bartenderId: number,
+    bertenderName: string,
     tableId: number,
     value: number,
     date: Date,
