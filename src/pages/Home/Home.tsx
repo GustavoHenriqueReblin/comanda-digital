@@ -4,120 +4,55 @@ import Loading from "../../components/Loading";
 import { routes, Table } from "../../types/types";
 import TableCard from "../../components/TableCard/TableCard";
 import { GetTables } from "../../graphql/queries/tableQueries";
-import { UPDATE_TABLE } from "../../graphql/mutations/table";
 import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
 
-import React, { useEffect, useState } from "react";
-import { useLazyQuery, useMutation, useSubscription } from "@apollo/client";
+import React, { useState } from "react";
+import { useQuery, useSubscription } from "@apollo/client";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 function Home() {
-  const [getTables, { data: tableData }] = useLazyQuery(GetTables);
-  const { data: tableStatusData } = useSubscription(CHANGE_TABLE_STATUS);
-  const [updateTable] = useMutation(UPDATE_TABLE);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Table[] | null>(null);
+
+  useQuery(GetTables, {
+    onCompleted: (res) => {
+      const data = res.tables;
+      setData(data as Table[]);
+      setLoading(false);
+    },
+    onError: (err) => {
+        console.error(err);
+        setLoading(false);
+    }
+  });
+
+  useSubscription(CHANGE_TABLE_STATUS, {
+    onSubscriptionData: (res) => {
+      const data = res.subscriptionData.data.ChangeTableStatus;
+      setData(
+        (data || []).map((table: any) => {
+          return {
+            ...table.data,
+          } as Table;
+        })
+      );
+    }
+  });
+
   const location = useLocation();
   const navigate = useNavigate();
-
   const currentPage = routes.find(page => page.route === location.pathname);
   const pageTitle = currentPage ? currentPage.title : 'Comanda digital';
 
-  useEffect(() => {
-    if (!tableData) {
-      const fetchTables = async () => {
-        try {
-          if (!tableData) {
-            return new Promise((resolve, reject) => {
-              getTables()
-                .then(res => {
-                    resolve(res.data.tables);
-                })
-                .catch(error => {
-                    reject(error);
-                });
-            });
-          }
-        } catch (error) {
-          console.error("Erro ao buscar as mesas: ", error);
-        }
-      };
-
-      const updateTableSelected = async () => {
-        try {
-          const tableString = localStorage.getItem('tableSelected');
-          if (tableString) {
-            return new Promise((resolve, reject) => {
-              const table = JSON.parse(tableString);
-              const newState = !table.state;
-              updateTable({
-                variables: {
-                  input: {
-                    id: table.id,
-                    code: table.code,
-                    state: newState,
-                  },
-                },
-              })
-                .then(res => {
-                  resolve(res.data.tables);
-                })
-                .catch(error => {
-                  reject(error);
-                });
-            });
-          }
-        } catch (error) {
-          console.error("Erro ao atualizar a mesa selecionada anteriormente: ", error);
-        }
-      };
-
-      const orderDataString = localStorage.getItem('orderData');
-      const orderData = orderDataString ? JSON.parse(orderDataString) : '';
-      if (orderData && orderData !== '') {
-        navigate('/queue');
-      } else {
-        updateTableSelected()
-          .then(() => {
-            localStorage.removeItem('tableSelected');
-            return fetchTables();
-          })
-          .then((data) => {
-            setData(data as Table[]);
-            setLoading(false);
-          })
-          .catch((updateTableError) => {
-            console.error("Erro ao atualizar a mesa selecionada anteriormente: ", updateTableError);
-          })
-          .catch((fetchTablesError) => {
-              console.error("Erro ao buscar os mesas: ", fetchTablesError);
-          })
-      }
-    }
-  }, [tableData]);  
-
-  useEffect(() => { 
-    if (tableStatusData && tableStatusData.ChangeTableStatus !== null) {
-      try {
-        setLoading(true);
-        setData(
-          (tableStatusData?.ChangeTableStatus || []).map((table: any) => {
-            return {
-              ...table.data,
-            } as Table;
-          })
-        );
-      } finally {
-        setLoading(false);  
-      }
-    }
-  }, [tableStatusData]);
+  const orderDataString = localStorage.getItem('orderData');
+  const orderData = orderDataString ? JSON.parse(orderDataString) : '';
+  orderData && orderData !== '' && navigate('/queue');
 
   return (
     <>
       {loading 
-      ? (<Loading title="Aguarde, carregando cardápio..." />) 
+      ? (<Loading title="Aguarde, carregando mesas..." />) 
       : (
         <>
           <Helmet>
@@ -132,7 +67,7 @@ function Home() {
           <div className="tables-container">
             <div className="table-box-container">
               { data && data.length > 0
-              ? (
+              && (
                 data.map((table: any) => (
                   <TableCard 
                     key={table.id} 
@@ -140,10 +75,7 @@ function Home() {
                     code={table.code}
                     state={table.state}
                   />
-              ))) 
-              : (
-                <></>
-              )} 
+              )))}
             </div>
           </div>
         </>
