@@ -5,18 +5,21 @@ import { routes, Table } from "../../types/types";
 import TableCard from "../../components/TableCard/TableCard";
 import { GetTables } from "../../graphql/queries/tableQueries";
 import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
+import { UPDATE_TABLE } from '../../graphql/mutations/table';
 
 import React, { useState } from "react";
-import { useQuery, useSubscription } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 function Home() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Table[] | null>(null);
+  const [updateTable] = useMutation(UPDATE_TABLE);
 
   useQuery(GetTables, {
     onCompleted: (res) => {
+      updateTableSelected();
       const data = res.tables;
       setData(data as Table[]);
       setLoading(false);
@@ -48,6 +51,31 @@ function Home() {
   const orderDataString = localStorage.getItem('orderData');
   const orderData = orderDataString ? JSON.parse(orderDataString) : '';
   orderData && orderData !== '' && navigate('/queue');
+
+  const updateTableSelected = async () => {
+    try {
+      const tableString = localStorage.getItem('tableSelected');
+      
+      if (tableString !== null) {
+        const table = JSON.parse(tableString);
+        const newState = !table.state;
+        updateTable({
+          variables: {
+            input: {
+              id: table.id,
+              code: table.code,
+              state: newState,
+            },
+          },
+        })
+          .then(() => {
+            localStorage.removeItem('tableSelected');
+          });
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar a mesa selecionada anteriormente: ", error);
+    }
+  };
 
   return (
     <>
