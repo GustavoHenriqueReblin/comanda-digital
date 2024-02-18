@@ -1,7 +1,6 @@
 import './totalizer.scss';
 import Modal from "../Modal/Modal";
 import { getDateTime } from "../../helper";
-import { useRememberContext } from "../../contexts/remember";
 import { CREATE_ORDER } from "../../graphql/mutations/order";
 
 import React, { useState } from "react";
@@ -19,7 +18,6 @@ interface TotalizerProps {
 function Totalizer({ isVisible, total, hasOrderConfirmed }: TotalizerProps) {
     const [isModalClearOpen, setIsModalClearOpen] = useState(false);
     const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
-    const { setProductsSelected, setResetProducts } = useRememberContext();
     const [createOrder] = useMutation(CREATE_ORDER);
     const formattedTotal = Number(total()).toLocaleString('pt-BR', {
         style: 'currency',
@@ -29,12 +27,8 @@ function Totalizer({ isVisible, total, hasOrderConfirmed }: TotalizerProps) {
 
     const clearItems = () => {
         try {
-            setProductsSelected(() => {
-                const updatedProducts: [] = [];
-                localStorage.setItem('productsSelected', JSON.stringify(updatedProducts));
-                setResetProducts(true);
-                return updatedProducts;
-            });
+            const updatedProducts: [] = [];
+            localStorage.setItem('productsSelected', JSON.stringify(updatedProducts));
         } finally {
             setIsModalClearOpen(false);
         }

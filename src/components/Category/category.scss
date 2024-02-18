@@ -1,0 +1,36 @@
+.category-container {
+    height: 124px;
+    width: 80px;
+    border-radius: 38px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px;
+    flex-shrink: 0;
+    cursor: pointer;
+
+    @media screen and (min-width: 1px) {
+        margin: 0 8px;
+    }
+
+    @media screen and (min-width: 1024px) {
+        margin: 0 18px;
+    }
+
+    &.selected {
+        background-color: rgb(207, 207, 207);
+    }
+
+    .icon-area {
+        height: 64px;
+        width: 64px;
+        background-color: black;
+        border-radius: 100%;
+        margin-bottom: 16px;
+    }
+
+    .name {
+        font-size: 14px;
+    }
+}

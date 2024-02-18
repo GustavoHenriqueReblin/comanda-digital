@@ -3,8 +3,8 @@ import './menu.scss';
 import React, { useState } from "react";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
-import { RememberContext } from "../../contexts/remember";
-import { Category, Product, routes, Table } from "../../types/types";
+import Category from '../../components/Category/Category';
+import { Category as CategoryType, Product, routes, Table } from "../../types/types";
 import { GetCategories } from '../../graphql/queries/categoryQueries';
 import { GetProducts } from '../../graphql/queries/productQueries';
 import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
@@ -12,26 +12,29 @@ import { UPDATE_TABLE } from "../../graphql/mutations/table";
 
 import { useQuery, useMutation, useLazyQuery } from '@apollo/client';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { IoRefresh } from "react-icons/io5";
 import { Helmet } from "react-helmet";
 import { useSubscription } from "@apollo/client";
+import { IoRefresh } from "react-icons/io5";
 
 function Menu() {
   const [loading, setLoading] = useState(true);
   const [orderIsConfirmed, setOrderIsConfirmed] = useState<boolean | null>(null);
-  const [categoriesExpanded, setCategoriesExpanded] = useState<Category[] | null>(null);
+  const [categorySelected, setCategorySelected] = useState<CategoryType | null>(null);
   const [productsSelected, setProductsSelected] = useState<Product[] | null>(null);
-  const [resetProducts, setResetProducts] = useState<boolean>(false);
   const [sessionTableSelected, setSessionTableSelected] = useState<string | null>(null);
   const [updateTable] = useMutation(UPDATE_TABLE);
   const [getProducts, { data: productsData }] = useLazyQuery(GetProducts);
 
   const { data: categoryData } = useQuery(GetCategories, {
     onCompleted: (res) => {
+      const localCategory = localStorage.getItem('categorySelected');
+      const category = localCategory ? JSON.parse(localCategory) : undefined;
+      (category !== null && category !== undefined) && setCategorySelected(category);
+      
       const categoryIds = res.categories.map((category: any) => Number(category.id));
 
       getProducts({ variables: { filter: { categoriesIds: categoryIds } } })
-        .then((res) => {
+        .then(() => {
           setLoading(false); 
         })
         .catch((error) => {
@@ -88,10 +91,6 @@ function Menu() {
     }
   };
 
-  const localCategories = localStorage.getItem('categoriesExpanded');
-  const categories = localCategories ? JSON.parse(localCategories) : [];
-  categoriesExpanded === null && setCategoriesExpanded(categories);
-
   const localProductsIds = localStorage.getItem('productsSelected');
   const selectedProducts = localProductsIds ? JSON.parse(localProductsIds) : [];
   productsSelected === null && setProductsSelected(selectedProducts);
@@ -109,9 +108,7 @@ function Menu() {
       { loading 
       ? ( <Loading title="Aguarde, carregando cardápio..." /> ) 
       : (
-          <RememberContext.Provider value={
-            { setCategoriesExpanded, setProductsSelected, resetProducts, setResetProducts }
-          }>
+          <>
             <Helmet>
               <title>{pageTitle}</title>
             </Helmet>
@@ -127,6 +124,28 @@ function Menu() {
                     <IoRefresh /> &nbsp; Trocar de mesa
                   </span>
                 )}
+              </div>
+              <div className='category-area'>
+                <Category 
+                  isSelected={categorySelected === null} 
+                  data={null} 
+                  onClick={() => {
+                    localStorage.setItem('categorySelected', 'null');
+                    setCategorySelected(null);
+                  }}
+                />
+                { categoryData && categoryData !== null && 
+                  categoryData.categories.map((category: CategoryType) => (
+                    <Category 
+                      key={category.id}
+                      isSelected={categorySelected !== undefined && categorySelected?.id === category.id} 
+                      data={category} 
+                      onClick={(category) => {
+                        localStorage.setItem('categorySelected', JSON.stringify(category))
+                        setCategorySelected(category);
+                      }}
+                    />
+                ))}
               </div>
             </div>
 
@@ -144,7 +163,7 @@ function Menu() {
               }} 
               hasOrderConfirmed={orderIsConfirmed} 
             />
-          </RememberContext.Provider>
+          </>
       )}
     </>
   )
