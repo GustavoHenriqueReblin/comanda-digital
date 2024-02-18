@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import './menu.scss';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
 import Category from '../../components/Category/Category';
@@ -118,13 +118,15 @@ function Menu() {
     localStorage.setItem('productsSelected', JSON.stringify(updatedProducts));
   };
 
-  const orderDataString = localStorage.getItem('orderData');
-  const orderData = orderDataString ? JSON.parse(orderDataString) : '';
-  orderIsConfirmed === null && setOrderIsConfirmed(!!orderData && orderData !== null);
-  (orderData && orderData !== '') && navigate('/queue');
+  useEffect(() => {
+    const orderDataString = localStorage.getItem('orderData');
+    const orderData = orderDataString ? JSON.parse(orderDataString) : '';
+    orderIsConfirmed === null && setOrderIsConfirmed(!!orderData && orderData !== null);
+    (orderData && orderData !== '') && navigate('/queue');
 
-  const localTable = localStorage.getItem('tableSelected');
-  localTable ? sessionTableSelected === null && setSessionTableSelected(localTable) : navigate('/');
+    const localTable = localStorage.getItem('tableSelected');
+    localTable ? sessionTableSelected === null && setSessionTableSelected(localTable) : navigate('/');
+  });
 
   return (
     <>  

@@ -7,7 +7,7 @@ import { GetTables } from "../../graphql/queries/tableQueries";
 import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
 import { UPDATE_TABLE } from '../../graphql/mutations/table';
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -48,10 +48,6 @@ function Home() {
   const currentPage = routes.find(page => page.route === location.pathname);
   const pageTitle = currentPage ? currentPage.title : 'Comanda digital';
 
-  const orderDataString = localStorage.getItem('orderData');
-  const orderData = orderDataString ? JSON.parse(orderDataString) : '';
-  orderData && orderData !== '' && navigate('/queue');
-
   const updateTableSelected = async () => {
     try {
       const tableString = localStorage.getItem('tableSelected');
@@ -76,6 +72,12 @@ function Home() {
       console.error("Erro ao atualizar a mesa selecionada anteriormente: ", error);
     }
   };
+
+  useEffect(() => {
+    const orderDataString = localStorage.getItem('orderData');
+    const orderData = orderDataString ? JSON.parse(orderDataString) : '';
+    orderData && orderData !== '' && navigate('/queue');
+  });
 
   return (
     <>

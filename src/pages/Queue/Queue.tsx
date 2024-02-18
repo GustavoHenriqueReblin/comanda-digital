@@ -5,7 +5,7 @@ import { Order, routes } from "../../types/types";
 import { GetOrder } from '../../graphql/queries/order';
 import { CHANGE_ORDER_STATUS } from '../../graphql/subscriptions/order';
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery, useSubscription } from '@apollo/client';
@@ -21,7 +21,6 @@ function Queue() {
 
     const orderDataString = localStorage.getItem('orderData');
     const localOrderData = orderDataString ? JSON.parse(orderDataString) : '';
-    !localOrderData && navigate('/');
 
     useQuery(GetOrder, { 
         variables: { input: { id: localOrderData.id }},
@@ -69,6 +68,10 @@ function Queue() {
                 }
             }
         }
+    });
+
+    useEffect(() => {
+        !localOrderData && navigate('/');
     });
 
     return (
