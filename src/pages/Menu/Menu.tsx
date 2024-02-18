@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
 import Category from '../../components/Category/Category';
-import { Category as CategoryType, Product, routes, Table } from "../../types/types";
+import { Category as CategoryType, Product as ProductType, routes, Table } from "../../types/types";
 import { GetCategories } from '../../graphql/queries/categoryQueries';
 import { GetProducts } from '../../graphql/queries/productQueries';
 import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
@@ -15,12 +15,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from "react-helmet";
 import { useSubscription } from "@apollo/client";
 import { IoRefresh } from "react-icons/io5";
+import Product from '../../components/Product/Product';
 
 function Menu() {
   const [loading, setLoading] = useState(true);
   const [orderIsConfirmed, setOrderIsConfirmed] = useState<boolean | null>(null);
   const [categorySelected, setCategorySelected] = useState<CategoryType | null>(null);
-  const [productsSelected, setProductsSelected] = useState<Product[] | null>(null);
+  const [productsSelected, setProductsSelected] = useState<ProductType[] | null>(null);
   const [sessionTableSelected, setSessionTableSelected] = useState<string | null>(null);
   const [updateTable] = useMutation(UPDATE_TABLE);
   const [getProducts, { data: productsData }] = useLazyQuery(GetProducts);
@@ -147,6 +148,28 @@ function Menu() {
                     />
                 ))}
               </div>
+              
+              <div className='product-area'>
+                { productsData && productsData !== null && categorySelected !== null 
+                  ? productsData.products
+                      .filter((product: ProductType) => Number(product.idCategory) === Number(categorySelected?.id))
+                      .map((product: ProductType) => (
+                        <Product 
+                          name={product.name} 
+                          ratingValue={4}
+                          price={product.price}
+                        />
+                    )) 
+                  : productsData.products
+                      .map((product: ProductType) => (
+                        <Product 
+                          name={product.name} 
+                          ratingValue={4}
+                          price={product.price}
+                        />
+                    ))
+                  }
+              </div>
             </div>
 
             <Totalizer 
@@ -158,7 +181,7 @@ function Menu() {
               total={() => {
                 const sessionProducts = localStorage.getItem('productsSelected');
                 const selectedProducts = sessionProducts ? JSON.parse(sessionProducts) : [];
-                const totalPrice = selectedProducts.reduce((sumAux: number, product: Product) => sumAux + product.price, 0);
+                const totalPrice = selectedProducts.reduce((sumAux: number, product: ProductType) => sumAux + product.price, 0);
                 return `${totalPrice.toFixed(2)}`;
               }} 
               hasOrderConfirmed={orderIsConfirmed} 

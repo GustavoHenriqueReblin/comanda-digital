@@ -62,4 +62,11 @@
                 ) 1 100%;
         }
     }
+
+    .product-area {
+        padding: 36px 16px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+        gap: 24px;
+    }
 }

@@ -1,0 +1,50 @@
+@import './src/variables.scss';
+
+.product-container {
+    height: 320px;
+    width: 100%;
+    padding: 18px;
+    border: 1px solid lighten($color: $gray, $amount: 28%);
+    border-radius: 12px;
+
+    .img {
+        height: 50%;
+        border-radius: 14px;
+        width: auto;
+        background-color: $bg-color;
+    }
+
+    .name {
+        height: 25%;
+        width: auto;
+        // margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .rating {
+        height: 2%;
+        width: auto;
+        // margin-top: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 14px;
+        gap: 4px;
+    }
+
+    .price {
+        height: 28%;
+        width: auto;
+        // margin-top: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 20px;
+    }
+}
