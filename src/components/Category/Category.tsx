@@ -16,7 +16,7 @@ function Category({ isSelected, data, onClick }: CategoryProps) {
                 <div className='icon-area'>
                     <span className='icon'></span>
                 </div>
-                <span className='name'>{ data !== null ? data.name : 'Todas' }</span>
+                <span className='name'>{ data !== null ? data.name : 'Todos' }</span>
             </div>
         </>
     )

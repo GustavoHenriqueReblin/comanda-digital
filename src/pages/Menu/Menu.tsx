@@ -24,7 +24,13 @@ function Menu() {
   const [productsSelected, setProductsSelected] = useState<ProductType[] | null>(null);
   const [sessionTableSelected, setSessionTableSelected] = useState<string | null>(null);
   const [updateTable] = useMutation(UPDATE_TABLE);
-  const [getProducts, { data: productsData }] = useLazyQuery(GetProducts);
+  const [getProducts, { data: productsData }] = useLazyQuery(GetProducts, {
+    onCompleted: () => {
+      const localProductsIds = localStorage.getItem('productsSelected');
+      const selectedProducts = localProductsIds ? JSON.parse(localProductsIds) : [];
+      productsSelected !== null && setProductsSelected(selectedProducts);
+    }
+  });
 
   const { data: categoryData } = useQuery(GetCategories, {
     onCompleted: (res) => {
@@ -92,9 +98,25 @@ function Menu() {
     }
   };
 
-  const localProductsIds = localStorage.getItem('productsSelected');
-  const selectedProducts = localProductsIds ? JSON.parse(localProductsIds) : [];
-  productsSelected === null && setProductsSelected(selectedProducts);
+  const isProductSelected = (product: ProductType): boolean => {
+    const selectedProducts = JSON.parse(localStorage.getItem('productsSelected') || '[]');
+    return selectedProducts.some((item: ProductType) => item.id === product.id);
+  };
+
+  const handleProductClick = (product: ProductType) => {
+    const selectedProducts = JSON.parse(localStorage.getItem('productsSelected') || '[]');
+    const isSelected = isProductSelected(product);
+
+    let updatedProducts = [];
+    if (!isSelected) {
+      updatedProducts = [...selectedProducts, product];
+    } else {
+      updatedProducts = selectedProducts.filter((item: ProductType) => item.id !== product.id);
+    }
+
+    setProductsSelected(updatedProducts);
+    localStorage.setItem('productsSelected', JSON.stringify(updatedProducts));
+  };
 
   const orderDataString = localStorage.getItem('orderData');
   const orderData = orderDataString ? JSON.parse(orderDataString) : '';
@@ -114,7 +136,7 @@ function Menu() {
               <title>{pageTitle}</title>
             </Helmet>
             
-            <div className="cards-container">
+            <div className="main">
               <div className="table-info">
                 <h2 className="table-title">
                   Número da sua mesa:&nbsp;
@@ -156,18 +178,18 @@ function Menu() {
                       .map((product: ProductType) => (
                         <Product 
                           key={product.id}
-                          name={product.name} 
-                          ratingValue={4}
-                          price={product.price}
+                          isSelected={isProductSelected(product)}
+                          data={product}
+                          onClick={(prod) => handleProductClick(prod)}
                         />
                     )) 
                   : productsData.products
                       .map((product: ProductType) => (
                         <Product 
                           key={product.id}
-                          name={product.name} 
-                          ratingValue={4}
-                          price={product.price}
+                          isSelected={isProductSelected(product)}
+                          data={product}
+                          onClick={(prod) => handleProductClick(prod)}
                         />
                     ))
                   }
