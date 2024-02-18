@@ -101,6 +101,9 @@ function Menu() {
   orderIsConfirmed === null && setOrderIsConfirmed(!!orderData && orderData !== null);
   (orderData && orderData !== '') && navigate('/queue');
 
+  const localTable = localStorage.getItem('tableSelected');
+  localTable ? sessionTableSelected === null && setSessionTableSelected(localTable) : navigate('/');
+
   return (
     <>  
       { loading 
