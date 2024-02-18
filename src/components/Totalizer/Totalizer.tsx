@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 interface TotalizerProps {
     isVisible: () => boolean | null;
     total: () => string;
-    hasOrderConfirmed?: boolean;
+    hasOrderConfirmed?: boolean | null;
 };
 
 function Totalizer({ isVisible, total, hasOrderConfirmed }: TotalizerProps) {

@@ -1,89 +1,66 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import './menu.scss';
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
 import { RememberContext } from "../../contexts/remember";
-import { Category, Order, Product, routes, Table } from "../../types/types";
+import { Category, Product, routes, Table } from "../../types/types";
 import { GetCategories } from '../../graphql/queries/categoryQueries';
 import { GetProducts } from '../../graphql/queries/productQueries';
 import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
 import { UPDATE_TABLE } from "../../graphql/mutations/table";
 
-import { useLazyQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation, useLazyQuery } from '@apollo/client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IoRefresh } from "react-icons/io5";
 import { Helmet } from "react-helmet";
 import { useSubscription } from "@apollo/client";
 
 function Menu() {
-  const { data: tableStatusData } = useSubscription(CHANGE_TABLE_STATUS);
-  const [getCategories, { data: categoryData }] = useLazyQuery(GetCategories);
-  const [getProducts, { data: productData }] = useLazyQuery(GetProducts);
   const [loading, setLoading] = useState(true);
-  const [orderIsConfirmed, setOrderIsConfirmed] = useState(true);
-  const [updateTable] = useMutation(UPDATE_TABLE);
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const [categoryExpandedIds, setCategoryExpandedIds] = useState<[number] | null>(null);
+  const [orderIsConfirmed, setOrderIsConfirmed] = useState<boolean | null>(null);
+  const [categoriesExpanded, setCategoriesExpanded] = useState<Category[] | null>(null);
   const [productsSelected, setProductsSelected] = useState<Product[] | null>(null);
   const [resetProducts, setResetProducts] = useState<boolean>(false);
   const [sessionTableSelected, setSessionTableSelected] = useState<string | null>(null);
+  const [updateTable] = useMutation(UPDATE_TABLE);
+  const [getProducts, { data: productsData }] = useLazyQuery(GetProducts);
 
-  const currentPage = routes.find(page => page.route === location.pathname);
-  const pageTitle = currentPage ? currentPage.title : 'Comanda digital';
+  const { data: categoryData } = useQuery(GetCategories, {
+    onCompleted: (res) => {
+      const categoryIds = res.categories.map((category: any) => Number(category.id));
 
-  useEffect(() => {
-    const orderDataString = localStorage.getItem('orderData');
-    const orderData = orderDataString ? JSON.parse(orderDataString) : '';
-    setOrderIsConfirmed(!!orderData && orderData !== null);
-    (orderData && orderData !== '') && navigate('/queue');
-
-    const localTable = localStorage.getItem('tableSelected');
-    localTable ? setSessionTableSelected(localTable) : navigate('/');
-
-    const fetchData = async () => {
-      if (!categoryData) {
-        getCategories()
+      getProducts({ variables: { filter: { categoriesIds: categoryIds } } })
         .then((res) => {
-          const categoryIds = res.data.categories.map((category: any) => Number(category.id));
+          setLoading(false); 
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar os produtos: ", error);
+          setLoading(false); 
+        });
+    },
+    onError: (error) => {
+      console.error("Erro ao buscar as categorias: ", error);
+      setLoading(false);
+    }
+  });
 
-          if (!productData) { 
-            getProducts({ variables: { filter: { categoriesIds: categoryIds } } })
-              .then(() => {
-                setLoading(false); 
-              })
-              .catch((error) => {console.error("Erro ao buscar os produtos:", error)});
-          }
-        }).catch((error) => {console.error("Erro ao buscar as categorias:", error)}); 
-      }
-    };
-    
-    fetchData();
-  }, [productData, categoryData]);
-
-  useEffect(() => { 
-    if (tableStatusData) {
+  useSubscription(CHANGE_TABLE_STATUS, {
+    onSubscriptionData: (res) => {
       const tableSelectedString = localStorage.getItem('tableSelected');
       const tableSelected = tableSelectedString ? JSON.parse(tableSelectedString) : '';
-      const expiredTable = tableStatusData.ChangeTableStatus.find((table: any) => (table.data as Table).id === tableSelected.id);
+      const expiredTable = res.subscriptionData.data.ChangeTableStatus.find((table: any) => (table.data as Table).id === tableSelected.id);
 
       if (!!expiredTable && expiredTable.data.state) { // Caso a mesa selecionada tenha sido atualizada para livre, redireciona
         navigate('/');
       }
-    }    
-  }, [tableStatusData]);
+    }
+  });
 
-  useEffect(() => {
-    const localCategoryIds = localStorage.getItem('categoryExpandedIds');
-    const categoryIds = localCategoryIds ? JSON.parse(localCategoryIds) : [];
-    setCategoryExpandedIds(categoryIds);
-
-    const localProductsIds = localStorage.getItem('productsSelected');
-    const selectedProducts = localProductsIds ? JSON.parse(localProductsIds) : [];
-    setProductsSelected(selectedProducts);
-  }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentPage = routes.find(page => page.route === location.pathname);
+  const pageTitle = currentPage ? currentPage.title : 'Comanda digital';
 
   const updateTableSelected = async () => {
     try {
@@ -111,17 +88,31 @@ function Menu() {
     }
   };
 
+  const localCategories = localStorage.getItem('categoriesExpanded');
+  const categories = localCategories ? JSON.parse(localCategories) : [];
+  categoriesExpanded === null && setCategoriesExpanded(categories);
+
+  const localProductsIds = localStorage.getItem('productsSelected');
+  const selectedProducts = localProductsIds ? JSON.parse(localProductsIds) : [];
+  productsSelected === null && setProductsSelected(selectedProducts);
+
+  const orderDataString = localStorage.getItem('orderData');
+  const orderData = orderDataString ? JSON.parse(orderDataString) : '';
+  orderIsConfirmed === null && setOrderIsConfirmed(!!orderData && orderData !== null);
+  (orderData && orderData !== '') && navigate('/queue');
+
   return (
     <>  
       { loading 
       ? ( <Loading title="Aguarde, carregando cardápio..." /> ) 
       : (
           <RememberContext.Provider value={
-            { setCategoryExpandedIds, setProductsSelected, resetProducts, setResetProducts }
+            { setCategoriesExpanded, setProductsSelected, resetProducts, setResetProducts }
           }>
             <Helmet>
               <title>{pageTitle}</title>
             </Helmet>
+            
             <div className="cards-container">
               <div className="table-info">
                 <h2 className="table-title">
@@ -134,13 +125,6 @@ function Menu() {
                   </span>
                 )}
               </div>
-              { !categoryData
-              ? null
-              : categoryData.categories.map((category: Category) => (
-                    <div className="item-container">
-                      {/* productData */}
-                    </div>
-              ))}
             </div>
 
             <Totalizer 

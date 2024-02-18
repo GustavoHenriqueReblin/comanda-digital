@@ -22,8 +22,8 @@ function Home() {
       setLoading(false);
     },
     onError: (err) => {
-        console.error(err);
-        setLoading(false);
+      console.error(err);
+      setLoading(false);
     }
   });
 
