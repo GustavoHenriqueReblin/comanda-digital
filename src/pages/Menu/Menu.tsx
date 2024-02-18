@@ -155,6 +155,7 @@ function Menu() {
                       .filter((product: ProductType) => Number(product.idCategory) === Number(categorySelected?.id))
                       .map((product: ProductType) => (
                         <Product 
+                          key={product.id}
                           name={product.name} 
                           ratingValue={4}
                           price={product.price}
@@ -163,6 +164,7 @@ function Menu() {
                   : productsData.products
                       .map((product: ProductType) => (
                         <Product 
+                          key={product.id}
                           name={product.name} 
                           ratingValue={4}
                           price={product.price}
