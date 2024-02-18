@@ -3,49 +3,31 @@ import './resumeOrder.scss';
 import { Order, Product } from "../../types/types";
 import { GetProducts } from "../../graphql/queries/productQueries";
 
-import React, { useEffect, useState } from "react";
-import { useLazyQuery } from "@apollo/client";
+import React, { useState } from "react";
+import { useQuery } from "@apollo/client";
 
 interface ResumeOrderProps {
     orderData: Order
 };
 
 function ResumeOrder({ orderData }: ResumeOrderProps) {
-    const [getProducts] = useLazyQuery(GetProducts);
     const [productData, setProductData] = useState<Product[] | null>(null);
-
-    useEffect(() => { 
-        if (!productData) {
-            const fetchProducts = async () => {
-                return new Promise((resolve, reject) => {
-                    const itemsProductsIds = orderData.items.map((item) => Number(item.productId));
-                    getProducts({ variables: { filter: { productsIds: itemsProductsIds } } })
-                        .then(res => {
-                            resolve(res.data.products);
-                        })
-                        .catch(error => {
-                            reject(error);
-                        });
-                  });
-            };
-
-            fetchProducts()
-                .then(data => {
-                    setProductData(data as Product[]);
-                })
-                .catch((error) => {
-                    console.error("Erro ao buscar os produtos do pedido: ", error);
-                })
+    
+    const itemsProductsIds = orderData.items.map((item) => Number(item.productId));
+    useQuery(GetProducts, {
+        variables: { filter: { productsIds: itemsProductsIds } },
+        onCompleted: (res) => {
+            const data = res.products;
+            setProductData(data as Product[]);
+        },
+        onError: (error) => {
+            console.error("Erro ao buscar os produtos: ", error);
         }
-    }, [productData, getProducts]);
-
-    useEffect(() => { 
-        setProductData(null);
-    }, [orderData]);
+    });
 
     return (
         <>  
-            { orderData ? (
+            { orderData && (
                 <>
                     {orderData?.bertenderName !== null ? (
                         <>
@@ -60,17 +42,11 @@ function ResumeOrder({ orderData }: ResumeOrderProps) {
                     )}
                     
                     <div className="info">Um resumo do seu pedido:</div>
-                    { productData && productData.length > 0
-                    ? (
-                        productData.map((product: any) => (
-                            <span key={product.id}>{product.name}</span>
-                        ))) 
-                    : (
-                        <></>
-                    )} 
+                    { productData && productData.length > 0 && ( productData.map((product: any) => (
+                        <span key={product.id}>{product.name}</span>
+                    )))} 
                 </>
-            )
-            : (<></>)}
+            )}
         </>
     )
 }
