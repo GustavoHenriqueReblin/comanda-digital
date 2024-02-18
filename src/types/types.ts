@@ -24,10 +24,6 @@ export type Table = {
     state: number
 };
 
-export enum Redirect {
-    ROOT
-};
-
 export type OrderItems = {
     id: number,
     orderId: number,
@@ -47,8 +43,16 @@ export type Order = {
     items: [OrderItems],
 };
 
-export const routeTitles: Record<string, string> = {
-    '/': 'Comanda digital - Mesas disponíveis',
-    '/menu': 'Comanda digital - Menu',
-    '/queue': 'Comanda digital - Fila de espera',
+type Page = {
+    route: string;
+    title: string;
+    name: string;
 };
+
+export const routes: Page[] = [
+    {route: '/', title: 'Comanda digital - Página Inicial', name: 'Página Inicial' },
+    {route: '/menu', title: 'Comanda digital - Cardápio', name: 'Cardápio' },
+    {route: '/queue', title: 'Comanda digital - Seus pedidos', name: 'Seus pedidos' },
+    {route: '/login', title: 'Comanda digital - Login', name: 'Login' },
+    {route: '/admin/products', title: 'Comanda digital - Produtos', name: 'Produtos' },
+];

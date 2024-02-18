@@ -1,12 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import './menu.scss';
 import React, { useEffect, useState } from "react";
-import CategoryCard from "../../components/CategoryCard/CategoryCard";
-import Item from "../../components/Item/Item";
 import Loading from "../../components/Loading";
 import Totalizer from "../../components/Totalizer/Totalizer";
 import { RememberContext } from "../../contexts/remember";
-import { Category, Order, Product, Redirect, routeTitles, Table } from "../../types/types";
+import { Category, Order, Product, routes, Table } from "../../types/types";
 import { GetCategories } from '../../graphql/queries/categoryQueries';
 import { GetProducts } from '../../graphql/queries/productQueries';
 import { CHANGE_TABLE_STATUS } from "../../graphql/subscriptions/table";
@@ -31,13 +29,8 @@ function Menu() {
   const [resetProducts, setResetProducts] = useState<boolean>(false);
   const [sessionTableSelected, setSessionTableSelected] = useState<string | null>(null);
 
-  const redirectTo = (typeRedirect: Redirect) => {
-    if (typeRedirect === Redirect.ROOT) {
-      navigate('/')
-    }
-  };
-
-  const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
+  const currentPage = routes.find(page => page.route === location.pathname);
+  const pageTitle = currentPage ? currentPage.title : 'Comanda digital';
 
   useEffect(() => {
     const orderDataString = localStorage.getItem('orderData');
@@ -108,7 +101,7 @@ function Menu() {
                   {sessionTableSelected ? JSON.parse(sessionTableSelected).code : ''}
                 </h2>
                 { !orderIsConfirmed && (
-                  <span className="change-table" onClick={() => redirectTo(Redirect.ROOT)}>
+                  <span className="change-table" onClick={() => navigate('/')}>
                     <IoRefresh /> &nbsp; Trocar de mesa
                   </span>
                 )}
@@ -116,37 +109,12 @@ function Menu() {
               { !categoryData
               ? null
               : categoryData.categories.map((category: Category) => (
-                  <CategoryCard 
-                    id={category.id}
-                    key={category.id} 
-                    title={category.name}
-                    isExpandedByUser={() => {
-                      return categoryExpandedIds?.includes(category.id);
-                    }}
-                  >
                     <div className="item-container">
-                      { productData &&
-                        productData.products &&
-                        productData.products
-                        .filter((product: Product) => product.idCategory === category.id)
-                        .map((filteredProduct: Product) => (
-                            <Item
-                              key={filteredProduct.id}
-                              id={filteredProduct.id}
-                              title={filteredProduct.name}
-                              price={filteredProduct.price}
-                              description={filteredProduct.description}
-                              isSelectedByUser={() => {
-                                return productsSelected?.some((product: Product) => product.id === Number(filteredProduct.id)) ?? false;
-                              }} 
-                              hasOrderConfirmed={orderIsConfirmed}                                       
-                            />
-                        )
-                      )}
+                      {/* productData */}
                     </div>
-                  </CategoryCard>
               ))}
             </div>
+
             <Totalizer 
               isVisible={() => {
                 const sessionIds = localStorage.getItem('productsSelected');

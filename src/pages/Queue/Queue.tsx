@@ -1,7 +1,7 @@
 import './queue.scss';
 import Loading from "../../components/Loading";
 import ResumeOrder from "../../components/ResumeOrder/ResumeOrder";
-import { Order, routeTitles } from "../../types/types";
+import { Order, routes } from "../../types/types";
 import { GetOrder } from '../../graphql/queries/order';
 import { CHANGE_ORDER_STATUS } from '../../graphql/subscriptions/order';
 
@@ -15,7 +15,8 @@ function Queue() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const location = useLocation();
-    const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
+    const currentPage = routes.find(page => page.route === location.pathname);
+    const pageTitle = currentPage ? currentPage.title : 'Comanda digital';
 
     const [getOrder] = useLazyQuery(GetOrder);
     const { data: subscriptionOrdersData } = useSubscription(CHANGE_ORDER_STATUS);

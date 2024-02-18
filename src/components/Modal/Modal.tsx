@@ -11,6 +11,7 @@ interface ModalProps {
 };
 
 function Modal({ title, isOpen, onClose, onConfirm }: ModalProps) {
+    
     useEffect(() => {
         const handleEsc = (event: KeyboardEvent) => {
             const keyCode = event.keyCode || event.which;

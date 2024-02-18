@@ -1,30 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import './header.scss';
-import { Redirect } from "../../types/types";
+import { routes } from '../../types/types';
 
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 
 function Header() {
-    const navigate = useNavigate();
+    const location = useLocation();
+    const currentPage = routes.find(page => page.route === location.pathname);
+    const pageName = currentPage ? currentPage.name : 'Comanda digital';
 
-    const redirectTo = (typeRedirect: Redirect) => {
-        if (typeRedirect === Redirect.ROOT) {
-            navigate('/')
-        }
-    };
     return (
         <>
-            <div className="header">
-                <div className="logo">
-                    <span onClick={() => redirectTo(Redirect.ROOT)} className="logo-title">Carlota’s Kuchen Haus
-                        <div className="line"></div>
-                    </span>
-                </div>
-                <div className="menu">
-                    <div className="menu-box">
-                        <h2>ME</h2>
-                        <h2>NU</h2>
-                    </div>
+            <div className='header'>
+                <div className='page-info'>
+                    <h2 className='title'>{ pageName }</h2>
+                    <span className='name'>Carlota’s Kuchen Haus</span>
                 </div>
             </div>
         </>

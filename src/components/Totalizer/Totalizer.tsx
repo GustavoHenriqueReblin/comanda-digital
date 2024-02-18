@@ -1,7 +1,6 @@
 import './totalizer.scss';
 import Modal from "../Modal/Modal";
 import { getDateTime } from "../../helper";
-import { Product } from "../../types/types";
 import { useRememberContext } from "../../contexts/remember";
 import { CREATE_ORDER } from "../../graphql/mutations/order";
 
@@ -30,8 +29,8 @@ function Totalizer({ isVisible, total, hasOrderConfirmed }: TotalizerProps) {
 
     const clearItems = () => {
         try {
-            setProductsSelected((prevProducts) => {
-                const updatedProducts: Product[] | [] = [];
+            setProductsSelected(() => {
+                const updatedProducts: [] = [];
                 localStorage.setItem('productsSelected', JSON.stringify(updatedProducts));
                 setResetProducts(true);
                 return updatedProducts;

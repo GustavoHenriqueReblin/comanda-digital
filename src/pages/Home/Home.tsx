@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import './home.scss';
 import Loading from "../../components/Loading";
-import { routeTitles, Table } from "../../types/types";
+import { routes, Table } from "../../types/types";
 import TableCard from "../../components/TableCard/TableCard";
 import { GetTables } from "../../graphql/queries/tableQueries";
 import { UPDATE_TABLE } from "../../graphql/mutations/table";
@@ -21,7 +21,8 @@ function Home() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const pageTitle = routeTitles[location.pathname] || 'Comanda digital';
+  const currentPage = routes.find(page => page.route === location.pathname);
+  const pageTitle = currentPage ? currentPage.title : 'Comanda digital';
 
   useEffect(() => {
     if (!tableData) {
