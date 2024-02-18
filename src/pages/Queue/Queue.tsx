@@ -5,68 +5,55 @@ import { Order, routes } from "../../types/types";
 import { GetOrder } from '../../graphql/queries/order';
 import { CHANGE_ORDER_STATUS } from '../../graphql/subscriptions/order';
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLazyQuery, useSubscription } from '@apollo/client';
+import { useQuery, useSubscription } from '@apollo/client';
 
 function Queue() {
     const [orderData, setOrderData] = useState<Order | null>(null);
     const [loading, setLoading] = useState(true);
+    
     const navigate = useNavigate();
     const location = useLocation();
     const currentPage = routes.find(page => page.route === location.pathname);
     const pageTitle = currentPage ? currentPage.title : 'Comanda digital';
 
-    const [getOrder] = useLazyQuery(GetOrder);
-    const { data: subscriptionOrdersData } = useSubscription(CHANGE_ORDER_STATUS);
-
-    useEffect(() => { 
-        const verifyOrder = async (orderId: Number) => {
-            try {
-                const res = await getOrder({ variables: { input: { id: orderId } } });
-                const data = res?.data?.order;
-        
-                if (data && data !== null) {
-                    return data;
-                } else {
-                    return null;
-                }
-            } catch (error) {
-                console.error("Erro ao buscar o pedido: ", error);
-                return null;
-            }
-        };
-
-        if (!orderData) {
+    useQuery(GetOrder, { 
+        variables: { input: { id: () => {
             const orderDataString = localStorage.getItem('orderData');
             const orderData = orderDataString ? JSON.parse(orderDataString) : '';
             if (orderData && orderData !== '') {
-                const availableStatus = [0,1,2];
-                verifyOrder(orderData.id).then((res) => {
-                    if (res && res !== null && availableStatus.includes(res.status)) {
-                        loading && setLoading(false); 
-                        setOrderData(res);
-                    } else {
-                        localStorage.removeItem('orderData');
-                        localStorage.removeItem('categoryExpandedIds');
-                        localStorage.removeItem('productsSelected');
-                        navigate('/');
-                    }
-                })
+                return orderData.id | 0;
             } else {
-                navigate('/')
+                navigate('/');
             }
-        }    
-    }, [orderData, setOrderData]);
+        }}},
+        onCompleted: (res) => {
+            const availableStatus = [0,1,2];
+            if (res && res !== null && availableStatus.includes(res.status)) {
+                setLoading(false); 
+                setOrderData(res);
+            } else {
+                localStorage.removeItem('orderData');
+                localStorage.removeItem('categoryExpandedIds');
+                localStorage.removeItem('productsSelected');
+                navigate('/');
+            }
+        },
+        onError: (error) => {
+            console.error("Erro ao buscar o pedido: ", error);
+            setLoading(false);
+        }
+    });
 
-    useEffect(() => { 
-        if (subscriptionOrdersData && subscriptionOrdersData.ChangeOrderStatus) {
+    useSubscription(CHANGE_ORDER_STATUS, {
+        onSubscriptionData: (res) => {
             const orderDataString = localStorage.getItem('orderData');
             const orderData = orderDataString ? JSON.parse(orderDataString) : '';
     
             if (orderData && orderData !== '') {
-                const findedOrder = subscriptionOrdersData.ChangeOrderStatus.find(
+                const findedOrder = res.subscriptionData.data.ChangeOrderStatus.find(
                     (order: any) => order.data && order.data.id === orderData.id 
                 );
                 
@@ -84,7 +71,7 @@ function Queue() {
                 }
             }
         }
-    }, [subscriptionOrdersData]);
+    });
 
     return (
         <>
@@ -96,13 +83,10 @@ function Queue() {
                         <title>{pageTitle}</title>
                     </Helmet>
                     { orderData 
-                    ? (
+                    && (
                         <div className="resume-container">
                             <ResumeOrder orderData={orderData} />
                         </div>
-                    ) 
-                    : (
-                        <></>
                     )} 
                 </div>
             )}
