@@ -19,21 +19,19 @@ function Queue() {
     const currentPage = routes.find(page => page.route === location.pathname);
     const pageTitle = currentPage ? currentPage.title : 'Comanda digital';
 
+    const orderDataString = localStorage.getItem('orderData');
+    const localOrderData = orderDataString ? JSON.parse(orderDataString) : '';
+    !localOrderData && navigate('/');
+
     useQuery(GetOrder, { 
-        variables: { input: { id: () => {
-            const orderDataString = localStorage.getItem('orderData');
-            const orderData = orderDataString ? JSON.parse(orderDataString) : '';
-            if (orderData && orderData !== '') {
-                return orderData.id | 0;
-            } else {
-                navigate('/');
-            }
-        }}},
+        variables: { input: { id: localOrderData.id }},
         onCompleted: (res) => {
             const availableStatus = [0,1,2];
-            if (res && res !== null && availableStatus.includes(res.status)) {
+            const data = res.order;
+
+            if (data && data !== null && availableStatus.includes(data.status)) {
                 setLoading(false); 
-                setOrderData(res);
+                setOrderData(data);
             } else {
                 localStorage.removeItem('orderData');
                 localStorage.removeItem('categoryExpandedIds');
